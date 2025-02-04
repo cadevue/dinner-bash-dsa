@@ -4,7 +4,7 @@ void ResetStaticList(StaticList *list) {
     list->count = 0;
 }
 
-int GetStaticListCount(const StaticList *list) {
+char GetStaticListCount(const StaticList *list) {
     return list->count;
 }
 
@@ -16,8 +16,8 @@ bool IsStaticListEmpty(const StaticList *list) {
     return list->count == 0;
 }
 
-int GetIndexOfStaticList(const StaticList *list, StaticListElement element) {
-    for (int i = 0; i < list->count; i++) {
+char GetIndexOfStaticList(const StaticList *list, StaticListElement element) {
+    for (char i = 0; i < list->count; i++) {
         if (SL_ELMT_EQUAL(list->data[i], element)) {
             return i;
         }
@@ -30,7 +30,7 @@ void InsertFirstStaticList(StaticList *list, StaticListElement element) {
     list->count++;
 
     // Shift all elements to the right
-    for (int i = list->count - 1; i > 0; i--) {
+    for (char i = list->count - 1; i > 0; i--) {
         list->data[i] = list->data[i - 1];
     }
 
@@ -43,7 +43,7 @@ void InsertLastStaticList(StaticList *list, StaticListElement element) {
     list->count++;
 }
 
-void InsertAtStaticList(StaticList *list, int index, StaticListElement element) {
+void InsertAtStaticList(StaticList *list, char index, StaticListElement element) {
     if (index < 0 || index > list->count) {
         return;
     }
@@ -58,7 +58,7 @@ void InsertAtStaticList(StaticList *list, int index, StaticListElement element) 
         list->count++;
 
         // Shift data after the index to the right
-        for (int i = list->count - 1; i > index; i--) {
+        for (char i = list->count - 1; i > index; i--) {
             list->data[i] = list->data[i - 1];
         }
         list->data[index] = element;
@@ -74,7 +74,7 @@ StaticListElement RemoveFirstStaticList(StaticList *list) {
     list->count--;
 
     // Shift all elements to the left
-    for (int i = 0; i < list->count; i++) {
+    for (char i = 0; i < list->count; i++) {
         list->data[i] = list->data[i + 1];
     }
 
@@ -90,7 +90,7 @@ StaticListElement RemoveLastStaticList(StaticList *list) {
     return list->data[list->count];
 
 }
-StaticListElement RemoveAtStaticList(StaticList *list, int index) {
+StaticListElement RemoveAtStaticList(StaticList *list, char index) {
     if (index < 0 || index >= list->count) {
         return (StaticListElement) {0};
     }
@@ -99,7 +99,7 @@ StaticListElement RemoveAtStaticList(StaticList *list, int index) {
     list->count--;
 
     // Shift all elements after the index to the left
-    for (int i = index; i < list->count; i++) {
+    for (char i = index; i < list->count; i++) {
         list->data[i] = list->data[i + 1];
     }
 
@@ -108,7 +108,7 @@ StaticListElement RemoveAtStaticList(StaticList *list, int index) {
 }
 
 void PrintStaticList(const StaticList *list) {
-    for (int i = 0; i < list->count; i++) {
+    for (char i = 0; i < list->count; i++) {
         if (list->type == TYPE_INT) {
             printf("%d ", list->data[i].i);
         } else if (list->type == TYPE_FLOAT) {

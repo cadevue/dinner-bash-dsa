@@ -1,15 +1,15 @@
 #pragma once
 typedef struct {
-    int x;
-    int y;
+    char x;
+    char y;
 } Point;
 
-void ResetPoint(Point *p, int x, int y);
+void ResetPoint(Point *p, char x, char y);
 
-int GetX(const Point *p);
-int GetY(const Point *p);
-void SetX(Point *p, int x);
-void SetY(Point *p, int y);
+char GetX(const Point *p);
+char GetY(const Point *p);
+void SetX(Point *p, char x);
+void SetY(Point *p, char y);
 
-void MovePoint(Point *p, int dx, int dy);
+void MovePoint(Point *p, char dx, char dy);
 void PrintPoint(const Point *p);
