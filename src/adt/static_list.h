@@ -4,12 +4,11 @@
 #define STATIC_LIST_CAPACITY 50
 #define SL_ELMT_EQUAL(e1, e2) (e1.c == e2.c)
 
-#define TYPE_INT 0
-#define TYPE_FLOAT 1
+#define TYPE_CHAR 0
+#define FOOD_INFO 1
 
 typedef union {
     char c;
-    /* data */
 } StaticListElement;
 
 

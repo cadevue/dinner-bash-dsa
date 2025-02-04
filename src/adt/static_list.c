@@ -108,16 +108,15 @@ StaticListElement RemoveAtStaticList(StaticList *list, char index) {
 }
 
 void PrintStaticList(const StaticList *list) {
+    printf("[");
     for (char i = 0; i < list->count; i++) {
-        if (list->type == TYPE_INT) {
-            printf("%d ", list->data[i].i);
-        } else if (list->type == TYPE_FLOAT) {
-            printf("%.2f ", list->data[i].f);
+        if (list->type == TYPE_CHAR) {
+            printf("%c,", list->data[i].c);
         } else {
             printf("Unknown type\n");
             break;
         }
     }
 
-    printf("\n");
+    printf("]\n");
 }
