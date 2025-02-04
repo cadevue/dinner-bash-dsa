@@ -1,12 +1,13 @@
 #pragma once
-
 #include "point.h"
+#include "../adt/prio_queue.h"
+
 #define MAX_SIMULATOR_NAME_LEN 50
 
 typedef struct {
     char name[MAX_SIMULATOR_NAME_LEN];
     Point position;
-    // Inventory inventory;
+    PrioQueue inventory;
 } Simulator;
 
 void ResetSimulator(Simulator *sim, const char *name, int x, int y);

@@ -22,6 +22,31 @@ bool IsPrioQueueEmpty(const PrioQueue *queue) {
     return queue->count == 0;
 }
 
+void RemoveExpiredFood(PrioQueue *queue, Time currentTime) {
+    if (queue->head == nullptr) {
+        return;
+    }
+
+    PrioQueueElement *current = queue->head;
+    PrioQueueElement *prev = nullptr;
+    while (current != nullptr) {
+        if (IsEqOrLater(&currentTime, &current->data.food.expiredTime)) {
+            if (prev == nullptr) {
+                queue->head = current->next;
+            } else {
+                prev->next = current->next;
+            }
+
+            free(current);
+            queue->count--;
+        } else {
+            prev = current;
+        }
+
+        current = prev->next;
+    }
+}
+
 void EnqueuePrioQueue(PrioQueue *queue, PrioQueueElementData data, char priority) {
     PrioQueueElement *element = (PrioQueueElement *) malloc(sizeof(PrioQueueElement));
     element->data = data;

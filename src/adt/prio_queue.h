@@ -23,6 +23,7 @@ void FreePrioQueue(PrioQueue *queue);
 
 bool IsPrioQueueEmpty(const PrioQueue *queue);
 
+void RemoveExpiredFood(PrioQueue *queue, Time currentTime);
 void EnqueuePrioQueue(PrioQueue *queue, PrioQueueElementData data, char priority);
 PrioQueueElementData DequeuePrioQueue(PrioQueue *queue);
 

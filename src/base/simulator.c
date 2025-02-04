@@ -5,6 +5,7 @@
 void ResetSimulator(Simulator *sim, const char *name, int x, int y) {
     strcpy(sim->name, name);
     ResetPoint(&sim->position, x, y);
+    ResetPrioQueue(&sim->inventory);
 }
 
 void SetSimulatorName(Simulator *sim, const char *name) {

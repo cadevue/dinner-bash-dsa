@@ -10,11 +10,11 @@ int main ()
 
     // Load the application
     // Food & Recipes
-    StaticList foodTypes;
-    LoadFoodTypes(&foodTypes);
+    // StaticList foodTypes;
+    // LoadFoodTypes(&foodTypes);
 
-    StaticList recipes;
-    LoadRecipes(&recipes);
+    // StaticList recipes;
+    // LoadRecipes(&recipes);
 
     // This should be loaded based on configuration
     /** Apllication State */
@@ -24,8 +24,8 @@ int main ()
     PrintSimulatorInfo(&sim);
 
     // Map
-    Matrix map;
-    LoadMap(&map);
+    // Matrix map;
+    // LoadMap(&map);
 
     // Application Loop
 
