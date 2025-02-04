@@ -9,7 +9,7 @@ typedef union {
 
 typedef struct {
     StackElement data[STACK_MAX_CAPACITY];
-    char count;
+    int count;
 } Stack;
 
 void ResetStack(Stack *stack);

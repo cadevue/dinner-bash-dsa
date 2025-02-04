@@ -7,10 +7,10 @@ typedef union {
     Food food;
 } PrioQueueElementData;
 
-typedef struct {
+typedef struct PrioQueueElement {
     PrioQueueElementData data;
     char priority;
-    PrioQueueElement *next;
+    struct PrioQueueElement *next;
 } PrioQueueElement;
 
 typedef struct {

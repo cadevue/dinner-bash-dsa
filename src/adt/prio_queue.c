@@ -1,4 +1,6 @@
 #include "prio_queue.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 void ResetPrioQueue(PrioQueue *queue) {
     queue->head = nullptr;

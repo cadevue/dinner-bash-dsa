@@ -11,13 +11,13 @@
 // /**  Static List is a fixed-size list with maximum size of STATIC_LIST_CAPACITY */
 typedef struct {
     char mat[MAT_ROW_CAP][MAT_COL_CAP];
-    char rowEff;
-    char colEff;
+    int rowEff;
+    int colEff;
 } Matrix;
 
-void ResetMatrix(Matrix *mat, char rowEff, char colEff);
-char GetMatrixRowEff(const Matrix *mat);
-char GetMatrixColEff(const Matrix *mat);
+void ResetMatrix(Matrix *mat, int rowEff, int colEff);
+int GetMatrixRowEff(const Matrix *mat);
+int GetMatrixColEff(const Matrix *mat);
 
-void SetMatrixElement(Matrix *mat, char row, char col, char element);
+void SetMatrixElement(Matrix *mat, int row, int col, char element);
 void PrintMatrix(const Matrix *mat);
