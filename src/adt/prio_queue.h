@@ -10,25 +10,20 @@ typedef union {
 typedef struct {
     PrioQueueElementData data;
     char priority;
+    PrioQueueElement *next;
 } PrioQueueElement;
 
 typedef struct {
-    PrioQueueElement *data;
+    PrioQueueElement *head;
     int count;
-    int capacity;
 } PrioQueue;
 
-void ResetPrioQueue(PrioQueue *queue, int capacity);
+void ResetPrioQueue(PrioQueue *queue);
 void FreePrioQueue(PrioQueue *queue);
 
-bool IsPrioQueueFull(const PrioQueue *queue);
 bool IsPrioQueueEmpty(const PrioQueue *queue);
 
 void EnqueuePrioQueue(PrioQueue *queue, PrioQueueElementData data, char priority);
 PrioQueueElementData DequeuePrioQueue(PrioQueue *queue);
 
 void PrintPrioQueue(const PrioQueue *queue);
-
-void ExpandPrioQueue(PrioQueue *queue, int addedCapacity);
-void ShrinkPrioQueue(PrioQueue *queue, int reducedCapacity);
-void CompactPrioQueue(PrioQueue *queue);
