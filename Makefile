@@ -1,5 +1,5 @@
 # Variables
-EXE_NAME    = my_program
+EXE_NAME    = app
 OUT_DIR     = build
 SRC_DIR     = src
 OBJ_DIR     = $(OUT_DIR)/intermediate
