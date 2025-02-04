@@ -4,6 +4,8 @@ typedef struct {
     int y;
 } Point;
 
+void ResetPoint(Point *p, int x, int y);
+
 int GetX(const Point *p);
 int GetY(const Point *p);
 void SetX(Point *p, int x);

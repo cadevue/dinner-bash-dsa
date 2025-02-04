@@ -9,6 +9,8 @@ typedef struct {
     // Inventory inventory;
 } Simulator;
 
+void ResetSimulator(Simulator *sim, const char *name, int x, int y);
+
 void SetSimulatorName(Simulator *sim, const char *name);
 const char *GetSimulatorName(const Simulator *sim);
 void PrintSimulatorInfo(const Simulator *sim);

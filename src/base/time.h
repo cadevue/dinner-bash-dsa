@@ -9,6 +9,8 @@ typedef struct {
 
 #define Duration Time
 
+void ResetTime(Time *t, char day, char hour, char minute);
+
 char GetDay(const Time *t);
 char GetHour(const Time *t);
 char GetMinute(const Time *t);

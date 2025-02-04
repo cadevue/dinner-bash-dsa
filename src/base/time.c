@@ -3,6 +3,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void ResetTime(Time *t, char day, char hour, char minute) {
+    t->day = day;
+    t->hour = hour;
+    t->minute = minute;
+}
+
 char GetDay(const Time *t) { return t->day; }
 char GetHour(const Time *t) { return t->hour; }
 char GetMinute(const Time *t) { return t->minute; }

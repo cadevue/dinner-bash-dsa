@@ -2,6 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void ResetPoint(Point *p, int x, int y) {
+    p->x = x;
+    p->y = y;
+}
+
 int GetX(const Point *p) { return p->x; }
 int GetY(const Point *p) { return p->y; }
 

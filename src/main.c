@@ -6,10 +6,15 @@ int main ()
 {
     printf("Application Started!\n");
 
-    Simulator sim = {
-        .name = "BNMO Application",
-        .position = {0, 0}
-    };
+    // Load the application
+
+    // Load Arena
+    // Load list of food
+    // Load list of recipes
+
+    // This should be loadede based on configuration
+    Simulator sim;
+    ResetSimulator(&sim, "BNMO Simulator", 0, 0);
     PrintSimulatorInfo(&sim);
 
     return 0;

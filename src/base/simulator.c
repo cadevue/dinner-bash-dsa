@@ -2,6 +2,11 @@
 #include <string.h>
 #include "simulator.h"
 
+void ResetSimulator(Simulator *sim, const char *name, int x, int y) {
+    strcpy(sim->name, name);
+    ResetPoint(&sim->position, x, y);
+}
+
 void SetSimulatorName(Simulator *sim, const char *name) {
     strcpy(sim->name, name);
 }
