@@ -1,4 +1,5 @@
 #pragma once
+
 #include "../core/boolean.h"
 #include "../core/simulator.h"
 #include "../adt/matrix.h"
@@ -14,8 +15,8 @@ typedef struct {
     bool isRunning;
 } Application;
 
-void SplashScreen();
-void GetName(char *name);
+void PrintSplashScreen();
+void RegisterUser(char *name);
 bool IsValidName(const char *name);
 void InitApplication(Application *app);
 

@@ -1,4 +1,5 @@
 #pragma once
+
 #include "point.h"
 #include "../adt/prio_queue.h"
 

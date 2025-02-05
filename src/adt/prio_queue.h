@@ -1,6 +1,6 @@
 #pragma once
-#include "../core/food.h"
 
+#include "../core/food.h"
 #define PRIO_Q_ALLOC_CONST 1.5f
 
 typedef union {

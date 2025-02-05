@@ -1,5 +1,7 @@
 #include "app.h"
+#include "screen.h"
 #include "loader.h"
+#include "strconst.h"
 #include "../core/simulator.h"
 
 #include <stdio.h>
@@ -7,20 +9,39 @@
 
 #define STR_EQ(s1, s2) (strcasecmp(s1, s2) == 0)
 
-void ClearScreen() {
-    printf("\033[H\033[J");
+void PrintProgressBar(int progress, int total) {
+    const int barWidth = 50;
+    float percentage = (float)progress / total;
+    int filledWidth = barWidth * percentage;
+
+    printf("[");
+    for (int i = 0; i < barWidth; ++i) {
+        if (i < filledWidth) {
+            printf("=");
+        } else {
+            printf(" ");
+        }
+    }
+    printf("] %d%%\r", (int)(percentage * 100));
+    fflush(stdout);  // Ensure the output is printed immediately
 }
 
-void SplashScreen() {
-    printf("Welcome to BNMO Simulator\n");
-    printf("Press any key to continue...\n");
-    getchar();
-}
+void RegisterUser(char *name) {
+    ClearScreen();
+    PrintHeader();
 
-void GetName(char *name) {
     printf("Enter your name: ");
     fgets(name, MAX_SIMULATOR_NAME_LEN, stdin);
     name[strlen(name) - 1] = '\0';
+
+    while (!IsValidName(name)) {
+        ClearScreen();
+        PrintHeader();
+
+        printf("Invalid name. Please enter a valid name: ");
+        fgets(name, MAX_SIMULATOR_NAME_LEN, stdin);
+        name[strlen(name) - 1] = '\0';
+    }
 }
 
 bool IsValidName(const char *name) {
@@ -84,8 +105,9 @@ static bool shouldNextLoop = true;
 void ExecuteApplicationLoop(Application *app) {
     do {
         ClearScreen();
-        PrintSimulatorInfo(&app->sim);
+        PrintHeader();
         PrintMap(app);
+        PrintSimulatorInfo(&app->sim);
         GetCommand(command);
         shouldNextLoop = ProcessCommand(app, command);
     } while (!shouldNextLoop);

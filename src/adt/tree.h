@@ -1,4 +1,5 @@
 #pragma once
+
 #include "../core/boolean.h"
 
 #define MAX_TREE_CHILD_COUNT 5

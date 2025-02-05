@@ -1,4 +1,5 @@
 #pragma once
+
 typedef struct {
     char x;
     char y;

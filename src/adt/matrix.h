@@ -1,4 +1,5 @@
 #pragma once
+
 #include "../core/boolean.h"
 #include "../core/action.h" // The value of matrix element is an action related to the tile
 

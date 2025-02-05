@@ -1,4 +1,5 @@
 #pragma once
+
 #include "../adt/static_list.h"
 #include "../adt/matrix.h"
 #include "../core/simulator.h"
