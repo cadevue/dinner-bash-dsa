@@ -17,7 +17,7 @@ OBJS        = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 # Targets
 .PHONY: all build clean run
 
-all: build run
+all: clean build run
 
 build: $(BIN_DIR)/$(EXE_NAME)
 

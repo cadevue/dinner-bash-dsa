@@ -4,7 +4,7 @@
 #include "tree.h"
 
 #define STATIC_LIST_CAPACITY 50
-#define SL_ELMT_EQUAL(e1, e2) (e1.c == e2.c)
+#define SL_ELMT_EQUAL(e1, e2) (e1.foodType.id == e2.foodType.id || e1.recipe.data.foodId == e2.recipe.data.foodId)
 
 #define TYPE_FOOD 0
 #define TYPE_RECIPE 1
@@ -19,7 +19,7 @@ typedef union {
 typedef struct {
     StaticListElement data[STATIC_LIST_CAPACITY];
     char type;
-    char count;
+    int count;
 } StaticList;
 
 void ResetStaticList(StaticList *list);
@@ -32,10 +32,10 @@ char GetIndexOfStaticList(const StaticList *list, StaticListElement element);
 
 void InsertFirstStaticList(StaticList *list, StaticListElement element);
 void InsertLastStaticList(StaticList *list, StaticListElement element);
-void InsertAtStaticList(StaticList *list, char index, StaticListElement element);
+void InsertAtStaticList(StaticList *list, int index, StaticListElement element);
 
 StaticListElement RemoveFirstStaticList(StaticList *list);
 StaticListElement RemoveLastStaticList(StaticList *list);
-StaticListElement RemoveAtStaticList(StaticList *list, char index);
+StaticListElement RemoveAtStaticList(StaticList *list, int index);
 
 void PrintStaticList(const StaticList *list);

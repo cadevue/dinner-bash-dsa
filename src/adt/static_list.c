@@ -1,4 +1,5 @@
 #include "static_list.h"
+#include <stdio.h>
 
 void ResetStaticList(StaticList *list) {
     list->count = 0;
@@ -17,7 +18,7 @@ bool IsStaticListEmpty(const StaticList *list) {
 }
 
 char GetIndexOfStaticList(const StaticList *list, StaticListElement element) {
-    for (char i = 0; i < list->count; i++) {
+    for (int i = 0; i < list->count; i++) {
         if (SL_ELMT_EQUAL(list->data[i], element)) {
             return i;
         }
@@ -30,7 +31,7 @@ void InsertFirstStaticList(StaticList *list, StaticListElement element) {
     list->count++;
 
     // Shift all elements to the right
-    for (char i = list->count - 1; i > 0; i--) {
+    for (int i = list->count - 1; i > 0; i--) {
         list->data[i] = list->data[i - 1];
     }
 
@@ -43,7 +44,7 @@ void InsertLastStaticList(StaticList *list, StaticListElement element) {
     list->count++;
 }
 
-void InsertAtStaticList(StaticList *list, char index, StaticListElement element) {
+void InsertAtStaticList(StaticList *list, int index, StaticListElement element) {
     if (index < 0 || index > list->count) {
         return;
     }
@@ -58,7 +59,7 @@ void InsertAtStaticList(StaticList *list, char index, StaticListElement element)
         list->count++;
 
         // Shift data after the index to the right
-        for (char i = list->count - 1; i > index; i--) {
+        for (int i = list->count - 1; i > index; i--) {
             list->data[i] = list->data[i - 1];
         }
         list->data[index] = element;
@@ -74,7 +75,7 @@ StaticListElement RemoveFirstStaticList(StaticList *list) {
     list->count--;
 
     // Shift all elements to the left
-    for (char i = 0; i < list->count; i++) {
+    for (int i = 0; i < list->count; i++) {
         list->data[i] = list->data[i + 1];
     }
 
@@ -90,7 +91,7 @@ StaticListElement RemoveLastStaticList(StaticList *list) {
     return list->data[list->count];
 
 }
-StaticListElement RemoveAtStaticList(StaticList *list, char index) {
+StaticListElement RemoveAtStaticList(StaticList *list, int index) {
     if (index < 0 || index >= list->count) {
         return (StaticListElement) {0};
     }
@@ -99,7 +100,7 @@ StaticListElement RemoveAtStaticList(StaticList *list, char index) {
     list->count--;
 
     // Shift all elements after the index to the left
-    for (char i = index; i < list->count; i++) {
+    for (int i = index; i < list->count; i++) {
         list->data[i] = list->data[i + 1];
     }
 
@@ -109,9 +110,11 @@ StaticListElement RemoveAtStaticList(StaticList *list, char index) {
 
 void PrintStaticList(const StaticList *list) {
     printf("[");
-    for (char i = 0; i < list->count; i++) {
-        if (list->type == TYPE_CHAR) {
-            printf("%c,", list->data[i].c);
+    for (int i = 0; i < list->count; i++) {
+        if (list->type == TYPE_FOOD) {
+            printf("%s,", list->data[i].foodType.name);
+        } else if (list->type == TYPE_RECIPE) {
+            printf("%d,", list->data[i].recipe.data.foodId);
         } else {
             printf("Unknown type\n");
             break;

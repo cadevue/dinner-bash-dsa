@@ -16,8 +16,14 @@ void GetName(char *name) {
     name[strlen(name) - 1] = '\0';
 }
 
-void InitApplication(Application *app, const char *configPath, const char *simName) {
-    ResetSimulator(&app->sim, simName, 0, 0);
+bool IsValidName(const char *name) {
+    return strlen(name) > 0;
+}
+
+void InitApplication(Application *app, const char *configPath) {
+    printf("Loading configuration: %s\n", configPath);
+
+    ResetSimulator(&app->sim, 0, 0);
     ResetMatrix(&app->map, 0, 0);
     ResetStack(&app->actions);
 

@@ -5,7 +5,7 @@
 
 #define MAX_FOOD_NAME_LENGTH 50
 typedef struct {
-    char id;
+    int id;
     char name[MAX_FOOD_NAME_LENGTH];
     char actionType;
     Duration timeToExpire;
@@ -13,8 +13,8 @@ typedef struct {
 } FoodType;
 
 
-void ResetFoodType(FoodType *foodType, char id, const char *name, Time expiredTime, Duration deliveryDuration);
-char GetFoodId(const FoodType *foodType);
+void ResetFoodType(FoodType *foodType, int id, const char *name, Time expiredTime, Duration deliveryDuration);
+int GetFoodId(const FoodType *foodType);
 const char *GetFoodName(const FoodType *FoodType);
 Duration GetFoodTimeToExpire(const FoodType *FoodType);
 Duration GetFoorTimeToDeliver(const FoodType *FoodType);

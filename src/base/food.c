@@ -1,14 +1,15 @@
 #include "food.h"
+#include <string.h>
 
 /** Food Type */
-void ResetFoodType(FoodType *food, char id, const char *name, Time expiredTime, Duration deliveryDuration) {
+void ResetFoodType(FoodType *food, int id, const char *name, Time expiredTime, Duration deliveryDuration) {
     food->id = id;
     strcpy(food->name, name);
     food->timeToExpire = expiredTime;
     food->timeToDeliver = deliveryDuration;
 }
 
-char GetFoodId(const FoodType *food) {
+int GetFoodId(const FoodType *food) {
     return food->id;
 }
 

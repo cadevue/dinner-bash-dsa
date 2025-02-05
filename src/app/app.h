@@ -14,10 +14,7 @@ typedef struct {
 
 void SplashScreen();
 void GetName(char *name);
-void InitApplication(Application *app, const char *configPath, const char *simName);
+bool IsValidName(const char *name);
+void InitApplication(Application *app, const char *configPath);
 
 void ExecuteApplicationLoop(Application *app);
-
-// char GetActionInput();
-// void ProcessActionInput(char actions, Simulator *sim, Matrix *map);
-// void PrintApplicationState(const Simulator *sim, const Matrix *map);

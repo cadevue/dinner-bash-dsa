@@ -4,7 +4,7 @@
 #define MAX_TREE_CHILD_COUNT 5
 
 typedef union {
-    char c;
+    int foodId;
 } TreeData;
 
 typedef struct Tree

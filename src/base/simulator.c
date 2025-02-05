@@ -2,8 +2,7 @@
 #include <string.h>
 #include "simulator.h"
 
-void ResetSimulator(Simulator *sim, const char *name, int x, int y) {
-    strcpy(sim->name, name);
+void ResetSimulator(Simulator *sim, int x, int y) {
     ResetPoint(&sim->position, x, y);
     ResetPrioQueue(&sim->inventory);
 }

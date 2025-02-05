@@ -10,7 +10,7 @@ typedef struct {
     PrioQueue inventory;
 } Simulator;
 
-void ResetSimulator(Simulator *sim, const char *name, int x, int y);
+void ResetSimulator(Simulator *sim, int x, int y);
 
 void SetSimulatorName(Simulator *sim, const char *name);
 const char *GetSimulatorName(const Simulator *sim);
