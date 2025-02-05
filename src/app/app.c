@@ -1,6 +1,6 @@
 #include "app.h"
 #include "loader.h"
-#include "../base/simulator.h"
+#include "../core/simulator.h"
 
 #include <stdio.h>
 #include <string.h>

@@ -1,6 +1,6 @@
 #pragma once
-#include "../base/boolean.h"
-#include "../base/simulator.h"
+#include "../core/boolean.h"
+#include "../core/simulator.h"
 #include "../adt/matrix.h"
 #include "../adt/stack.h"
 #include "../adt/static_list.h"

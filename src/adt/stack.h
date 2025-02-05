@@ -1,5 +1,5 @@
 #pragma once
-#include "../base/boolean.h"
+#include "../core/boolean.h"
 
 #define STACK_MAX_CAPACITY 75
 

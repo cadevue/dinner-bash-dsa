@@ -1,5 +1,5 @@
 #pragma once
-#include "../base/boolean.h"
+#include "../core/boolean.h"
 
 #define MAT_ROW_CAP 25
 #define MAT_COL_CAP 25

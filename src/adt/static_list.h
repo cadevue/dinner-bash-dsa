@@ -1,6 +1,6 @@
 #pragma once
-#include "../base/boolean.h"
-#include "../base/food.h"
+#include "../core/boolean.h"
+#include "../core/food.h"
 #include "tree.h"
 
 #define STATIC_LIST_CAPACITY 50
