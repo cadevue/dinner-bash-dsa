@@ -16,6 +16,6 @@ const char *GetSimulatorName(const Simulator *sim){
 }
 
 void PrintSimulatorInfo(const Simulator *sim) {
-    printf("Simulator: %s\n", sim->name);
+    printf("Player: %s\n", sim->name);
     printf("Position: (%d, %d)\n", GetX(&sim->position), GetY(&sim->position));
 }

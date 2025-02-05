@@ -21,15 +21,27 @@ bool IsValidName(const char *name) {
     return strlen(name) > 0;
 }
 
+void PrintMap(const Application *app) {
+    for (int i = 0; i < app->map.rowEff + 2; i++) {
+        for (int j = 0; j < app->map.colEff + 2; j++) {
+            if (i == 0 || i == app->map.rowEff + 1 || j == 0 || j == app->map.colEff + 1) {
+                printf("* ");
+                continue;
+            }
+
+            printf("%c ", GetSymbolForAction(GetActionAtLocation(&app->map, i - 1, j - 1)));
+        }
+
+        printf("\n");
+    }
+}
+
 void InitApplication(Application *app, const char *configPath) {
     printf("Loading configuration: %s\n", configPath);
 
     // Initialize the application
     ResetSimulator(&app->sim, 0, 0);
-    ResetMatrix(&app->map, 0, 0);
     ResetStack(&app->actions);
-    ResetStaticList(&app->foodDirectory);
-    ResetStaticList(&app->recipes);
 
     // Load the configuration
     LoadFoodTypes(&app->foodDirectory, "food_types.json");
@@ -38,6 +50,7 @@ void InitApplication(Application *app, const char *configPath) {
 
     app->isRunning = true;
     PrintSimulatorInfo(&app->sim);
+    PrintMap(app);
 }
 
 void ExecuteApplicationLoop(Application *app) {

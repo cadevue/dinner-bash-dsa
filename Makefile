@@ -7,7 +7,7 @@ BIN_DIR     = $(OUT_DIR)/bin
 
 # Compiler and flags
 CC          = gcc
-CFLAGS      = -Wall -Wextra -O2
+CFLAGS      = -Wall -Wextra -O2 -g
 LDFLAGS     =
 
 # Source and object files
