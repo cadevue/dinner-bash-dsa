@@ -5,6 +5,12 @@
 #include <stdio.h>
 #include <string.h>
 
+#define STR_EQ(s1, s2) (strcasecmp(s1, s2) == 0)
+
+void ClearScreen() {
+    printf("\033[H\033[J");
+}
+
 void SplashScreen() {
     printf("Welcome to BNMO Simulator\n");
     printf("Press any key to continue...\n");
@@ -49,17 +55,40 @@ void InitApplication(Application *app) {
     ResetStack(&app->actions);
 
     /** Temporary hardcoded path */
-    LoadFoodTypes(&app->foodDirectory, "./config/basic/foods.txt");
-    LoadRecipes(&app->recipes, "./config/basic/recipes.txt");
-    LoadMap(&app->map, &app->sim, "./config/basic/map.txt");
+    LoadFoodTypes(&app->foodDirectory, "../../config/basic/foods.txt");
+    LoadRecipes(&app->recipes, "../../config/basic/recipes.txt");
+    LoadMap(&app->map, &app->sim, "../../config/basic/map.txt");
 
     app->isRunning = true;
-    PrintSimulatorInfo(&app->sim);
-    PrintMap(app);
 }
 
+void GetCommand(char *command) {
+    printf("Enter command: ");
+    fgets(command, 50, stdin);
+    command[strlen(command) - 1] = '\0';
+}
+
+bool ProcessCommand(Application *app, char *command) {
+    if (STR_EQ(command, "exit") || STR_EQ(command, "quit")) {
+        app->isRunning = false;
+        return true;
+    } else {
+        printf("Unknown command\n");
+        return true;
+    }
+}
+
+static char command[50];
+static bool shouldNextLoop = true;
+
 void ExecuteApplicationLoop(Application *app) {
-    app->isRunning = false;
+    do {
+        ClearScreen();
+        PrintSimulatorInfo(&app->sim);
+        PrintMap(app);
+        GetCommand(command);
+        shouldNextLoop = ProcessCommand(app, command);
+    } while (!shouldNextLoop);
 }
 
 void CleanUpApplication(Application *app) {

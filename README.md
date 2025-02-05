@@ -16,12 +16,20 @@ A CLI program implemented in C about a cooking management game! Player can move 
 - Stack to store the player's action history, with undo and redo feature
 
 # How to Run 🚀
-Prerequisites:
+### Prerequisites
 - GCC Compiler
-- Makefile
+- CMake
+- Makefiles
 
-Steps:
+### Windows
 1. Navigate to the project directory
-2. Run `make build` to compile the program
-3. Run `make run` to start the program
-3. Optionally, you can run `make all` to compile and run the program in one command
+2. Run `.\scripts\build.bat` to compile the program. (It uses "MinGW Makefiles" generator as defaults. If yours is different, you can change it in the script)
+3. Run `.\scripts\run.bat` to run the program, or you can just immediately run the program in `build\bin\app.exe`
+
+### Other Operating System
+1. Navigate to the project directory
+2. Make build directory: `mkdir build`, then navigate to build directory `cd build`
+3. Run `cmake ..` to generate the makefiles
+4. Run `make` to compile the program
+
+*If the build fails, you might have to specify the Makefiles generator (-G).*
