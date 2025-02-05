@@ -1,0 +1,31 @@
+6               # This is N (number of food)
+11              # Raw Chicken ID : 11
+Raw Chicken     # Food Name 1
+1 0 0           # Will be expired in 1 day
+0 0 15          # Delivery time is 15 minutesV
+Buy             # Action: must be bought
+21              # Chopped Chicken ID : 21
+Chopped Chicken # Food Name 2
+0 2 0           # Will be expired in 2 hours
+0 0 0           # Not bought, so no delivery time
+Chop            # Action: chop to make it
+10              # Flour ID : 10
+Flour
+0 1 0
+0 0 30
+Buy
+15              # Cooking Oil ID : 15
+Minyak Goreng
+0 1 30
+0 1 0
+Buy
+31              # Flour-Coated Chicken ID : 31
+Flour-Coated Chicken
+0 0 30
+0 0 0
+Mix
+37              # Fried Chicken ID : 37
+Fried Chicken
+0 0 15
+0 0 0
+Fry

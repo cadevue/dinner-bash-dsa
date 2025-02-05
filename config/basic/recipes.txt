@@ -1,0 +1,15 @@
+3           # There are 3 recipes
+21 1 11
+31 2 21 10
+37 2 31 15
+# Row 2 (21 1 11) means:
+# Chopped Chicken (ID: 21) has 1 child
+# and the child is Raw Chicken (ID: 11)
+
+# Row 3 (31 2 21 10) means:
+# Flour-Coated Chicken (ID: 31) has 2 children
+# and the children is Chopped Chicken (ID: 21) and Flour (ID: 10)
+
+# Row 4 (37 2 31 15) means:
+# Fried Chicken (ID: 37) has 2 children
+# and the children is Flour-Coated Chicken (ID: 31) and Cooking Oil (ID: 15)
