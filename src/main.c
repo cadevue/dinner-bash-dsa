@@ -19,6 +19,6 @@ int main ()
 
     CleanUpApplication(&app);
 
-    printf("Application exit gracefully\n");
+    printf("\n\nApplication exit gracefully\n");
     return 0;
 }

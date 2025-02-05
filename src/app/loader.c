@@ -85,8 +85,6 @@ void LoadFoodTypes(StaticList *foodTypes, const char *path) {
         ResetFoodType(&foodType, id, name, action, expireDuration, deliveryDuration);
         InsertLastStaticList(foodTypes, (StaticListElement) { .foodType = foodType });
     }
-
-    printf("Food types loaded successfully\n");
 }
 
 Tree *FindOrCreateNode(StaticList *recipes, int foodId) {
@@ -153,8 +151,6 @@ void LoadRecipes(StaticList *recipes, const char *path) {
         }
     }
     fclose(file);
-
-    printf("Recipes loaded successfully\n");
 }
 
 char MapConfigSymbolToAction(char symbol) {
@@ -223,6 +219,4 @@ void LoadMap(Matrix *map, Simulator *sim, const char *path) {
         }
     }
     fclose(file);
-
-    printf("Map loaded successfully\n");
 }

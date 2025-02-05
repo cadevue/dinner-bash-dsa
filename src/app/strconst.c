@@ -42,7 +42,7 @@ const char *SPLASH_SCREEN =
 
 
 const char * HEADER=
-"Welcome to Dinner Bash : A Cooking Management Game                                                  \n"
+"Welcome to Dinner Bash : A Cooking Management CLI Simulation                                        \n"
 "Made by Addin Munawwar Yusuf ( Cadevue )                                                            \n"
 "C Programming  ||  Algorithm and Data Structure                                                     \n"
 "                                                                                                    \n"
