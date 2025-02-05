@@ -1,7 +1,9 @@
 #include "static_list.h"
 #include <stdio.h>
+#include <stdlib.h>
 
-void ResetStaticList(StaticList *list) {
+void ResetStaticList(StaticList *list, char type) {
+    list->type = type;
     list->count = 0;
 }
 
@@ -25,6 +27,15 @@ char GetIndexOfStaticList(const StaticList *list, StaticListElement element) {
     }
 
     return -1;
+}
+
+StaticListElement* GetStaticListElement(StaticList *list, int index)
+{
+    if (index < 0 || index >= list->count) {
+        return NULL;
+    }
+
+    return &list->data[index];
 }
 
 void InsertFirstStaticList(StaticList *list, StaticListElement element) {
@@ -114,7 +125,7 @@ void PrintStaticList(const StaticList *list) {
         if (list->type == TYPE_FOOD) {
             printf("%s,", list->data[i].foodType.name);
         } else if (list->type == TYPE_RECIPE) {
-            printf("%d,", list->data[i].recipe.data.foodId);
+            printf("%d,", list->data[i].recipe->data.foodId);
         } else {
             printf("Unknown type\n");
             break;
@@ -122,4 +133,15 @@ void PrintStaticList(const StaticList *list) {
     }
 
     printf("]\n");
+}
+
+void FreeStaticList(StaticList *list) {
+    for (int i = 0; i < list->count; i++)
+    {
+        if (list->type == TYPE_RECIPE) {
+            free(list->data[i].recipe);
+        }
+    }
+
+    ResetStaticList(list, list->type);
 }

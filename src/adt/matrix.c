@@ -46,8 +46,10 @@ char GetSymbolForAction(char action) {
     switch (action) {
         case ACTION_NONE:
             return ' ';
+        case ACTION_OBSTACLE:
+            return 'X';
         case ACTION_BUY:
-            return 'B';
+            return 'T';
         case ACTION_MIX:
             return 'M';
         case ACTION_CHOP:

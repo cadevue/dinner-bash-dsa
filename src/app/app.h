@@ -17,6 +17,7 @@ typedef struct {
 void SplashScreen();
 void GetName(char *name);
 bool IsValidName(const char *name);
-void InitApplication(Application *app, const char *configPath);
+void InitApplication(Application *app);
 
 void ExecuteApplicationLoop(Application *app);
+void CleanUpApplication(Application *app);

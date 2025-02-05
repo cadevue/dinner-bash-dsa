@@ -13,7 +13,7 @@ typedef struct {
 } FoodType;
 
 
-void ResetFoodType(FoodType *foodType, int id, const char *name, Time expiredTime, Duration deliveryDuration);
+void ResetFoodType(FoodType *foodType, int id, const char *name, char action, Time expiredTime, Duration deliveryDuration);
 int GetFoodId(const FoodType *foodType);
 const char *GetFoodName(const FoodType *FoodType);
 Duration GetFoodTimeToExpire(const FoodType *FoodType);

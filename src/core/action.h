@@ -12,3 +12,6 @@
 #define ACTION_MOVE_E   8
 #define ACTION_MOVE_S   9
 #define ACTION_MOVE_W   10
+#define ACTION_OBSTACLE 11
+
+#define ACTION_SIM_POS  99

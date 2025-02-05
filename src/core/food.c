@@ -2,9 +2,10 @@
 #include <string.h>
 
 /** Food Type */
-void ResetFoodType(FoodType *food, int id, const char *name, Time expiredTime, Duration deliveryDuration) {
+void ResetFoodType(FoodType *food, int id, const char *name, char action, Time expiredTime, Duration deliveryDuration) {
     food->id = id;
     strcpy(food->name, name);
+    food->actionType = action;
     food->timeToExpire = expiredTime;
     food->timeToDeliver = deliveryDuration;
 }

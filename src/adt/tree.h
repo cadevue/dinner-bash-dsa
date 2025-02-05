@@ -15,14 +15,12 @@ typedef struct Tree
 } Tree;
 
 void ResetTree(Tree *tree);
-void FreeTree(Tree *tree);
 
 bool IsTreeEmpty(const Tree *tree);
 bool IsTreeChildrenFull(const Tree *tree);
 bool IsTreeLeaf(const Tree *tree);
 
 void AddChild(Tree *tree, Tree *child);
-void RemoveChild(Tree *tree, int index);
 
 Tree *GetChild(const Tree *tree, int index);
 TreeData GetData(const Tree *tree);

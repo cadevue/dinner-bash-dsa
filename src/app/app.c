@@ -21,11 +21,18 @@ bool IsValidName(const char *name) {
     return strlen(name) > 0;
 }
 
+bool IsSimulatorAt(const Simulator *sim, int x, int y) {
+    return GetX(&sim->position) == x && GetY(&sim->position) == y;
+}
+
 void PrintMap(const Application *app) {
     for (int i = 0; i < app->map.rowEff + 2; i++) {
         for (int j = 0; j < app->map.colEff + 2; j++) {
             if (i == 0 || i == app->map.rowEff + 1 || j == 0 || j == app->map.colEff + 1) {
                 printf("* ");
+                continue;
+            } else if (IsSimulatorAt(&app->sim, i - 1, j - 1)) {
+                printf("S ");
                 continue;
             }
 
@@ -36,17 +43,15 @@ void PrintMap(const Application *app) {
     }
 }
 
-void InitApplication(Application *app, const char *configPath) {
-    printf("Loading configuration: %s\n", configPath);
-
+void InitApplication(Application *app) {
     // Initialize the application
     ResetSimulator(&app->sim, 0, 0);
     ResetStack(&app->actions);
 
-    // Load the configuration
-    LoadFoodTypes(&app->foodDirectory, "food_types.json");
-    LoadRecipes(&app->recipes, "recipes.json");
-    LoadMap(&app->map, "map.json");
+    /** Temporary hardcoded path */
+    LoadFoodTypes(&app->foodDirectory, "./config/basic/foods.txt");
+    LoadRecipes(&app->recipes, "./config/basic/recipes.txt");
+    LoadMap(&app->map, &app->sim, "./config/basic/map.txt");
 
     app->isRunning = true;
     PrintSimulatorInfo(&app->sim);
@@ -55,4 +60,9 @@ void InitApplication(Application *app, const char *configPath) {
 
 void ExecuteApplicationLoop(Application *app) {
     app->isRunning = false;
+}
+
+void CleanUpApplication(Application *app) {
+    FreeStaticList(&app->recipes);
+    FreeSimulator(&app->sim);
 }

@@ -13,11 +13,14 @@ int main ()
         GetName(app.sim.name);
     }
 
-    InitApplication(&app, "config.json");
+    InitApplication(&app);
 
     while (app.isRunning) {
         ExecuteApplicationLoop(&app);
     }
 
+    CleanUpApplication(&app);
+
+    printf("Application exit gracefully\n");
     return 0;
 }

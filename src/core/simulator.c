@@ -15,7 +15,19 @@ const char *GetSimulatorName(const Simulator *sim){
     return sim->name;
 }
 
+void SetSimulatorPosition(Simulator *sim, int x, int y) {
+    ResetPoint(&sim->position, x, y);
+}
+
+Point GetSimulatorPosition(const Simulator *sim) {
+    return sim->position;
+}
+
 void PrintSimulatorInfo(const Simulator *sim) {
     printf("Player: %s\n", sim->name);
     printf("Position: (%d, %d)\n", GetX(&sim->position), GetY(&sim->position));
+}
+
+void FreeSimulator(Simulator *sim) {
+    FreePrioQueue(&sim->inventory);
 }

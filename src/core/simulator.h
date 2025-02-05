@@ -14,4 +14,8 @@ void ResetSimulator(Simulator *sim, int x, int y);
 
 void SetSimulatorName(Simulator *sim, const char *name);
 const char *GetSimulatorName(const Simulator *sim);
+void SetSimulatorPosition(Simulator *sim, int x, int y);
+Point GetSimulatorPosition(const Simulator *sim);
+
 void PrintSimulatorInfo(const Simulator *sim);
+void FreeSimulator(Simulator *sim);
