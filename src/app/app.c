@@ -70,11 +70,19 @@ void PrintMap(const Application *app) {
                 printf("* ");
                 continue;
             } else if (IsSimulatorAt(&app->sim, i - 1, j - 1)) {
-                printf("S ");
+                printf("\033[1;31m@\033[0m ");
+                continue;
+            }
+            
+            char action = GetActionAtLocation(&app->map, i - 1, j - 1);
+            if (action == ACTION_OBSTACLE) {
+                printf("\033[1;30mX\033[0m ");
                 continue;
             }
 
+            printf("\033[1;32m");
             printf("%c ", GetSymbolForAction(GetActionAtLocation(&app->map, i - 1, j - 1)));
+            printf("\033[0m");
         }
 
         printf("\n");
@@ -105,7 +113,7 @@ void InitApplication(Application *app) {
 }
 
 void GetCommand(char *command) {
-    printf("\nUse Command 'help' to see available commands\n");
+    printf("\nUse Command 'help' to see available commands!\n");
     printf("Enter command: ");
     fgets(command, 50, stdin);
     command[strlen(command) - 1] = '\0';
