@@ -3,13 +3,15 @@
 #include "../base/simulator.h"
 #include "../adt/matrix.h"
 #include "../adt/stack.h"
+#include "../adt/static_list.h"
 
 typedef struct {
     Simulator sim;
     Matrix map;
     Stack actions;
+    StaticList foodDirectory;
+    StaticList recipes;
     bool isRunning;
-    int iteration;
 } Application;
 
 void SplashScreen();

@@ -1,4 +1,5 @@
 #include "app.h"
+#include "loader.h"
 #include "../base/simulator.h"
 
 #include <stdio.h>
@@ -23,13 +24,19 @@ bool IsValidName(const char *name) {
 void InitApplication(Application *app, const char *configPath) {
     printf("Loading configuration: %s\n", configPath);
 
+    // Initialize the application
     ResetSimulator(&app->sim, 0, 0);
     ResetMatrix(&app->map, 0, 0);
     ResetStack(&app->actions);
+    ResetStaticList(&app->foodDirectory);
+    ResetStaticList(&app->recipes);
+
+    // Load the configuration
+    LoadFoodTypes(&app->foodDirectory, "food_types.json");
+    LoadRecipes(&app->recipes, "recipes.json");
+    LoadMap(&app->map, "map.json");
 
     app->isRunning = true;
-    app->iteration = 0;
-
     PrintSimulatorInfo(&app->sim);
 }
 
