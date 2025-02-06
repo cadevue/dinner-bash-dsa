@@ -2,7 +2,6 @@
 #include "screen.h"
 #include "loader.h"
 #include "strconst.h"
-#include "../core/simulator.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -13,11 +12,11 @@
 void ClearAndPrintHeader() {
     ClearScreen();
     PrintHeader();
-    
 }
 
 void PrintAppState(const Application *app) {
     ClearAndPrintHeader();
+    PrintTime(&app->currentTime);
     PrintMap(app);
     printf("\n");
     PrintSimulatorInfo(&app->sim);
@@ -40,64 +39,63 @@ void RegisterUser(char *name) {
         name[strlen(name) - 1] = '\0';
     }
 
-    printf("Registering user...\n", name);
-    for (int i = 0; i <= 100; i += 2) {
-        PrintProgressBar(i, 100);
-        usleep(2000);
-    }
+    // printf("Registering user...\n", name);
+    // for (int i = 0; i <= 100; i += 2) {
+    //     PrintProgressBar(i, 100);
+    //     usleep(2000);
+    // }
 }
 
 bool IsValidName(const char *name) {
     return strlen(name) > 0;
 }
 
-bool IsSimulatorAt(const Simulator *sim, int x, int y) {
-    return GetX(&sim->position) == x && GetY(&sim->position) == y;
-}
-
 void InitApplication(Application *app) {
     // Initialize the application
     ResetSimulator(&app->sim, 0, 0);
     ResetStack(&app->actions);
+    ResetTime(&app->currentTime, 1, 8, 0);
 
     /** Temporary hardcoded path */
     LoadFoodTypes(&app->foodDirectory, "../../config/basic/foods.txt");
     LoadRecipes(&app->recipes, "../../config/basic/recipes.txt");
     LoadMap(&app->map, &app->sim, "../../config/basic/map.txt");
 
-    printf("\n\nLoading configurations...\n");
-    for (int i = 0; i <= 100; i += 2) {
-        PrintProgressBar(i, 100);
-        usleep(5000);
-    }
-    printf("\nConfigurations loaded\n");
+    // printf("\n\nLoading configurations...\n");
+    // for (int i = 0; i <= 100; i += 2) {
+    //     PrintProgressBar(i, 100);
+    //     usleep(5000);
+    // }
+    // printf("\nConfigurations loaded\n");
 
     printf("\nWelcome, %s!\n", app->sim.name);
-    usleep(2000000);
+    usleep(100000);
+    // usleep(2000000);
 
     app->isRunning = true;
 }
 
 /** Command Implementor */
-bool MoveSimulator(Application *app, int x, int y) {
-    char action = GetActionAtLocation(&app->map, GetX(&app->sim.position), GetY(&app->sim.position));
+bool MoveSimulator(Application *app, int x, int y, char *reason) {
+    char action = GetActionAtLocation(&app->map, x, y);
+
     if (action == ACTION_OBSTACLE || action == ACTION_INVALID) {
-        printf("You can't move there. There's a wall!\n");
+        sprintf(reason, "You can't move there, there's a wall");
         return false;
     } 
     
     if (action == ACTION_BUY || action == ACTION_MIX || action == ACTION_CHOP || action == ACTION_FRY || action == ACTION_BOIL) {
-        printf("You can't move to tile action (%c)", GetSymbolForAction(action));
+        sprintf(reason, "You can't move to tile action (%c)", GetSymbolForAction(action));
         return false;
     } 
     
     if (action == ACTION_NONE) {
         SetSimulatorPosition(&app->sim, x, y);
-        printf("You moved to (%d, %d)\n", GetX(&app->sim.position), GetY(&app->sim.position));
         return true;
     }
 
-    printf("You cannot move there!");
+    sprintf(reason, "Unknown action (%c)", GetSymbolForAction(action));
+    return false;
 }
 
 /** Command Processor */
@@ -126,32 +124,34 @@ bool ProcessCommand(Application *app, char *command) {
         ClearAndPrintHeader();
         PrintLegend();
         return false;
-    } else if (STR_EQ(command, "up") || STR_EQ(command, "down") || STR_EQ(command, "left") || STR_EQ(command, "right")) {
+    } else if (
+        STR_EQ(command, "up") || STR_EQ(command, "down") || STR_EQ(command, "left") || STR_EQ(command, "right") ||
+        STR_EQ(command, "u") || STR_EQ(command, "d") || STR_EQ(command, "l") || STR_EQ(command, "r")
+    ) {
         int x = GetX(&app->sim.position);
         int y = GetY(&app->sim.position);
+        char reason[120];
 
         bool success = false;
 
-        if (STR_EQ(command, "up")) {
-            success = MoveSimulator(app, x - 1, y);
-        } else if (STR_EQ(command, "down")) {
-            success = MoveSimulator(app, x + 1, y);
-        } else if (STR_EQ(command, "left")) {
-            success = MoveSimulator(app, x, y - 1);
-        } else if (STR_EQ(command, "right")) {
-            success = MoveSimulator(app, x, y + 1);
+        if (STR_EQ(command, "up") || STR_EQ(command, "u")) {
+            success = MoveSimulator(app, x - 1, y, reason);
+        } else if (STR_EQ(command, "down") || STR_EQ(command, "d")) {
+            success = MoveSimulator(app, x + 1, y, reason);
+        } else if (STR_EQ(command, "left") || STR_EQ(command, "l")) {
+            success = MoveSimulator(app, x, y - 1, reason);
+        } else if (STR_EQ(command, "right") || STR_EQ(command, "r")) {
+            success = MoveSimulator(app, x, y + 1, reason);
         }
 
         if (!success) {
             PrintAppState(app);
+            printf("\n%s\n", reason);
         }
 
         return success;
     } else {
-        ClearAndPrintHeader();
-        PrintMap(app);
-        printf("\n");
-        PrintSimulatorInfo(&app->sim);
+        PrintAppState(app);
         printf("\nUnknown command: %s\n", strlen(command) > 0 ? command : "<empty>");
         
         return false;
@@ -160,10 +160,7 @@ bool ProcessCommand(Application *app, char *command) {
 
 
 void ExecuteApplicationLoop(Application *app) {
-    ClearAndPrintHeader();
-    PrintMap(app);
-    printf("\n");
-    PrintSimulatorInfo(&app->sim);
+    PrintAppState(app);
 
     // Command processing
     GetCommand(command);
@@ -174,6 +171,8 @@ void ExecuteApplicationLoop(Application *app) {
         GetCommand(command);
         shouldNextLoop = ProcessCommand(app, command);
     }
+
+    AddMinute(&app->currentTime, 1); // Increment time by 1 minute for each execution loop
 }
 
 void CleanUpApplication(Application *app) {

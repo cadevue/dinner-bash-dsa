@@ -43,6 +43,9 @@ void PrintProgressBar(int progress, int total) {
     fflush(stdout);  // Ensure the output is printed immediately
 }
 
+bool IsSimulatorAt(const Simulator *sim, int x, int y) {
+    return GetX(&sim->position) == x && GetY(&sim->position) == y;
+}
 
 void PrintMap(const Application *app) {
     for (int i = 0; i < app->map.rowEff + 2; i++) {

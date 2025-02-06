@@ -3,22 +3,22 @@
 #include "boolean.h"
 
 typedef struct {
-    char day;
-    char hour;   // [0..23]
-    char minute; // [0..59]
+    int day;
+    int hour;   // [0..23]
+    int minute; // [0..59]
 } Time;
 
 #define Duration Time
 
-void ResetTime(Time *t, char day, char hour, char minute);
+void ResetTime(Time *t, int day, int hour, int minute);
 
-char GetDay(const Time *t);
-char GetHour(const Time *t);
-char GetMinute(const Time *t);
+int GetDay(const Time *t);
+int GetHour(const Time *t);
+int GetMinute(const Time *t);
 
-void AddDay(Time *t, char day);
-void AddHour(Time *t, char hour);
-void AddMinute(Time *t, char minute);
+void AddDay(Time *t, int day);
+void AddHour(Time *t, int hour);
+void AddMinute(Time *t, int minute);
 
 void AddDuration(Time *t, Duration *duration);
 

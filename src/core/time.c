@@ -3,36 +3,34 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void ResetTime(Time *t, char day, char hour, char minute) {
+void ResetTime(Time *t, int day, int hour, int minute) {
     t->day = day;
     t->hour = hour;
     t->minute = minute;
 }
 
-char GetDay(const Time *t) { return t->day; }
-char GetHour(const Time *t) { return t->hour; }
-char GetMinute(const Time *t) { return t->minute; }
+int GetDay(const Time *t) { return t->day; }
+int GetHour(const Time *t) { return t->hour; }
+int GetMinute(const Time *t) { return t->minute; }
 
-void AddDay(Time *t, char day) { 
+void AddDay(Time *t, int day) { 
     t->day += day;
 }
 
-void AddHour(Time *t, char hour) {
+void AddHour(Time *t, int hour) {
     t->hour += hour;
     if (t->hour > 23) {
-        t->hour = hour % 24;
+        AddDay(t, t->hour / 24);
+        t->hour = t->hour % 24;
     }
-
-    AddDay(t, hour / 24);
 }
 
-void AddMinute(Time *t, char minute) {
+void AddMinute(Time *t, int minute) {
     t->minute += minute;
     if (t->minute > 59) {
-        t->minute = minute % 60;
+        AddHour(t, t->minute / 60);
+        t->minute = t->minute % 60;
     }
-
-    AddHour(t, minute / 60);
 }
 
 void AddDuration(Time *t, Duration *duration) {
@@ -58,5 +56,5 @@ bool IsEqOrLater(const Time *t1, const Time *t2) {
 }
 
 void PrintTime(const Time *t) {
-    printf("Day %d, %d:%d\n", t->day, t->hour, t->minute);
+    printf("Day %d, %02d:%02d\n", t->day, t->hour, t->minute);
 }

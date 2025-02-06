@@ -8,7 +8,7 @@
             "program": "${workspaceFolder}/build/bin/app.exe", // Add .exe for Windows
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/build/bin",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",

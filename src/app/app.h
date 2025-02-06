@@ -2,6 +2,7 @@
 
 #include "../core/boolean.h"
 #include "../core/simulator.h"
+#include "../core/time.h"
 #include "../adt/matrix.h"
 #include "../adt/stack.h"
 #include "../adt/static_list.h"
@@ -12,6 +13,7 @@ typedef struct {
     Stack actions;
     StaticList foodDirectory;
     StaticList recipes;
+    Time currentTime;
     bool isRunning;
 } Application;
 
