@@ -111,20 +111,29 @@ void GetCommand(char *command) {
 }
 
 bool ProcessCommand(Application *app, char *command) {
+    /** Exit */
     if (STR_EQ(command, "exit") || STR_EQ(command, "quit")) {
         app->isRunning = false;
         return true;
+
+    /** Help */
     } else if (STR_EQ(command, "help")) {
         ClearAndPrintHeader();
         PrintHelp();
         return false;
+
+    /** Back to game */
     } else if (STR_EQ(command, "back")) {
         PrintAppState(app);
         return false;
+
+    /** Show Legend */
     } else if (STR_EQ(command, "legend")) {
         ClearAndPrintHeader();
         PrintLegend();
         return false;
+
+    /** Navigation */
     } else if (
         STR_EQ(command, "up") || STR_EQ(command, "down") || STR_EQ(command, "left") || STR_EQ(command, "right") ||
         STR_EQ(command, "u") || STR_EQ(command, "d") || STR_EQ(command, "l") || STR_EQ(command, "r")
@@ -151,6 +160,8 @@ bool ProcessCommand(Application *app, char *command) {
         }
 
         return success;
+
+    /** Wait */
     } else if (STR_START_WITH(command, "wait")) {
         int h, m;
         int result = sscanf(command + 5, "%d %d", &h, &m);
@@ -169,6 +180,61 @@ bool ProcessCommand(Application *app, char *command) {
         AddHour(&app->currentTime, h);
         AddMinute(&app->currentTime, m-1); // -1 because the loop will increment the time by 1 minute
         return true;
+
+    /** Inventory */
+    } else if (STR_EQ(command, "inventory")) {
+        PrintAppState(app);
+        PrintInventory(app);
+        return false;
+
+    /** Catalog */
+    } else if (STR_EQ(command, "catalog")) {
+        PrintAppState(app);
+        PrintCatalogMenu(app);
+        return false;
+
+    /** Recipe */
+    } else if (STR_EQ(command, "cookbook")) {
+        PrintAppState(app);
+        PrintCookbookMenu(app);
+        return false;
+
+    /** Delivery */
+    } else if (STR_EQ(command, "delivery")) {
+        PrintAppState(app);
+        PrintDeliveryMenu(app);
+        return false;
+
+    /** Buy */
+    } else if (STR_EQ(command, "buy")) {
+        PrintBuyMenu(app);
+        return false;
+
+    /** Mix */
+    } else if (STR_EQ(command, "mix")) {
+        PrintAppState(app);
+        PrintMixMenu(app);
+        return false;
+
+    /** Chop */
+    } else if (STR_EQ(command, "chop")) {
+        PrintAppState(app);
+        PrintChopMenu(app);
+        return false;
+
+    /** Fry */
+    } else if (STR_EQ(command, "fry")) {
+        PrintAppState(app);
+        PrintFryMenu(app);
+        return false;
+
+    /** Boil */
+    } else if (STR_EQ(command, "boil")) {
+        PrintAppState(app);
+        PrintBoilMenu(app);
+        return false;
+
+    /** Unknown command */
     } else {
         PrintAppState(app);
         printf("\nUnknown command: %s\n", strlen(command) > 0 ? command : "<empty>");
@@ -182,14 +248,10 @@ void ExecuteApplicationLoop(Application *app) {
     PrintAppState(app);
 
     // Command processing
-    GetCommand(command);
-    shouldNextLoop = ProcessCommand(app, command);
-
-    while (!shouldNextLoop)
-    {
+    do {
         GetCommand(command);
         shouldNextLoop = ProcessCommand(app, command);
-    }
+    } while (!shouldNextLoop);
 
     AddMinute(&app->currentTime, 1); // Increment time by 1 minute for each execution loop
 }

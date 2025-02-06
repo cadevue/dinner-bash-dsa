@@ -125,7 +125,7 @@ void PrintStaticList(const StaticList *list) {
         if (list->type == TYPE_FOOD) {
             printf("%s,", list->data[i].foodType.name);
         } else if (list->type == TYPE_RECIPE) {
-            printf("%d,", list->data[i].recipe->data.foodId);
+            printf("%d,", list->data[i].recipe->data);
         } else {
             printf("Unknown type\n");
             break;

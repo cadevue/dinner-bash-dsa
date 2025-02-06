@@ -72,3 +72,39 @@ void PrintMap(const Application *app) {
         printf("\n");
     }
 }
+
+void PrintInventory(const Application *app) {
+    printf("\nInventory: Not Implemented\n");
+}
+
+void PrintCatalogMenu(const Application *app) {
+    printf("\nCatalog: Not Implemented\n");
+}
+
+void PrintCookbookMenu(const Application *app) {
+    printf("\nCookbook: Not Implemented\n");
+}
+
+void PrintDeliveryMenu(const Application *app) {
+    printf("\nDelivery: Not Implemented\n");
+}
+
+void PrintBuyMenu(const Application *app) {
+    printf("\nBuy: Not Implemented\n");
+}
+
+void PrintMixMenu(const Application *app) {
+    printf("\nMix: Not Implemented\n");
+}
+
+void PrintChopMenu(const Application *app) {
+    printf("\nChop: Not Implemented\n");
+}
+
+void PrintFryMenu(const Application *app) {
+    printf("\nFry: Not Implemented\n");
+}
+
+void PrintBoilMenu(const Application *app) {
+    printf("\nBoil: Not Implemented\n");
+}

@@ -33,7 +33,7 @@ Tree *GetChild(const Tree *tree, int index) {
     return tree->children[index];
 }
 
-TreeData GetData(const Tree *tree) {
+int GetData(const Tree *tree) {
     return tree->data;
 }
 

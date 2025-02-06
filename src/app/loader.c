@@ -90,13 +90,13 @@ void LoadFoodTypes(StaticList *foodTypes, const char *path) {
 Tree *FindOrCreateNode(StaticList *recipes, int foodId) {
     for (int i = 0; i < GetStaticListCount(recipes); i++) {
         Tree *node = (Tree *) (GetStaticListElement(recipes, i)->recipe);
-        if (node->data.foodId == foodId) {
+        if (node->data == foodId) {
             return node;
         }
     }
 
     Tree *newNode = (Tree *)malloc(sizeof(Tree));
-    newNode->data.foodId = foodId;
+    newNode->data = foodId;
     newNode->childCount = 0;
 
     StaticListElement elmt = { .recipe = newNode };

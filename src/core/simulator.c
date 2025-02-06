@@ -4,7 +4,7 @@
 
 void ResetSimulator(Simulator *sim, int x, int y) {
     ResetPoint(&sim->position, x, y);
-    ResetPrioQueue(&sim->inventory);
+    ResetInventory(&sim->inventory);
 }
 
 void SetSimulatorName(Simulator *sim, const char *name) {
@@ -29,5 +29,5 @@ void PrintSimulatorInfo(const Simulator *sim) {
 }
 
 void FreeSimulator(Simulator *sim) {
-    FreePrioQueue(&sim->inventory);
+    FreeInventory(&sim->inventory);
 }

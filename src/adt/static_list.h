@@ -5,7 +5,7 @@
 #include "tree.h"
 
 #define STATIC_LIST_CAPACITY 50
-#define SL_ELMT_EQUAL(e1, e2) (e1.foodType.id == e2.foodType.id || e1.recipe->data.foodId == e2.recipe->data.foodId)
+#define SL_ELMT_EQUAL(e1, e2) (e1.foodType.id == e2.foodType.id || e1.recipe->data == e2.recipe->data)
 
 #define TYPE_FOOD 0
 #define TYPE_RECIPE 1

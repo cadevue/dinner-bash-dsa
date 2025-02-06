@@ -4,13 +4,9 @@
 
 #define MAX_TREE_CHILD_COUNT 5
 
-typedef union {
-    int foodId;
-} TreeData;
-
 typedef struct Tree
 {
-    TreeData data;
+    int data;
     int childCount;
     struct Tree *children[MAX_TREE_CHILD_COUNT];
 } Tree;
@@ -24,5 +20,5 @@ bool IsTreeLeaf(const Tree *tree);
 void AddChild(Tree *tree, Tree *child);
 
 Tree *GetChild(const Tree *tree, int index);
-TreeData GetData(const Tree *tree);
+int GetData(const Tree *tree);
 int GetChildCount(const Tree *tree);
