@@ -30,6 +30,9 @@ void AddMinute(Time *t, int minute) {
     if (t->minute > 59) {
         AddHour(t, t->minute / 60);
         t->minute = t->minute % 60;
+    } else if (t->minute < 0) {
+        AddHour(t, t->minute / 60 - 1);
+        t->minute = 60 + t->minute % 60;
     }
 }
 

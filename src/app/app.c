@@ -8,6 +8,7 @@
 #include <unistd.h>
 
 #define STR_EQ(s1, s2) (strcasecmp(s1, s2) == 0)
+#define STR_START_WITH(s1, s2) (strncasecmp(s1, s2, strlen(s2)) == 0)
 
 void ClearAndPrintHeader() {
     ClearScreen();
@@ -150,6 +151,24 @@ bool ProcessCommand(Application *app, char *command) {
         }
 
         return success;
+    } else if (STR_START_WITH(command, "wait")) {
+        int h, m;
+        int result = sscanf(command + 5, "%d %d", &h, &m);
+        if (result != 2) {
+            PrintAppState(app);
+            printf("\nInvalid wait parameters: %s\n", command + 5);
+            return false;
+        }
+
+        if (h < 0 || m < 0) {
+            PrintAppState(app);
+            printf("\nInvalid wait parameters: %d %d\n", h, m);
+            return false;
+        }
+
+        AddHour(&app->currentTime, h);
+        AddMinute(&app->currentTime, m-1); // -1 because the loop will increment the time by 1 minute
+        return true;
     } else {
         PrintAppState(app);
         printf("\nUnknown command: %s\n", strlen(command) > 0 ? command : "<empty>");
