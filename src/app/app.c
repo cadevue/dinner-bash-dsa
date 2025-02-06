@@ -13,28 +13,20 @@
 void ClearAndPrintHeader() {
     ClearScreen();
     PrintHeader();
+    
 }
 
-void PrintProgressBar(int progress, int total) {
-    const int barWidth = 50;
-    float percentage = (float)progress / total;
-    int filledWidth = barWidth * percentage;
-
-    printf("[");
-    for (int i = 0; i < barWidth; ++i) {
-        if (i < filledWidth) {
-            printf("=");
-        } else {
-            printf(" ");
-        }
-    }
-    printf("] %d%%\r", (int)(percentage * 100));
-    fflush(stdout);  // Ensure the output is printed immediately
+void PrintAppState(const Application *app) {
+    ClearAndPrintHeader();
+    PrintMap(app);
+    printf("\n");
+    PrintSimulatorInfo(&app->sim);
 }
 
 void RegisterUser(char *name) {
     ClearAndPrintHeader();
 
+    // Clear the input buffer
     printf("Enter your name: ");
     fgets(name, MAX_SIMULATOR_NAME_LEN, stdin);
     name[strlen(name) - 1] = '\0';
@@ -49,7 +41,7 @@ void RegisterUser(char *name) {
     }
 
     printf("Registering user...\n", name);
-    for (int i = 0; i < 100; i += 2) {
+    for (int i = 0; i <= 100; i += 2) {
         PrintProgressBar(i, 100);
         usleep(2000);
     }
@@ -63,32 +55,6 @@ bool IsSimulatorAt(const Simulator *sim, int x, int y) {
     return GetX(&sim->position) == x && GetY(&sim->position) == y;
 }
 
-void PrintMap(const Application *app) {
-    for (int i = 0; i < app->map.rowEff + 2; i++) {
-        for (int j = 0; j < app->map.colEff + 2; j++) {
-            if (i == 0 || i == app->map.rowEff + 1 || j == 0 || j == app->map.colEff + 1) {
-                printf("* ");
-                continue;
-            } else if (IsSimulatorAt(&app->sim, i - 1, j - 1)) {
-                printf("\033[1;31m@\033[0m ");
-                continue;
-            }
-            
-            char action = GetActionAtLocation(&app->map, i - 1, j - 1);
-            if (action == ACTION_OBSTACLE) {
-                printf("\033[1;30mX\033[0m ");
-                continue;
-            }
-
-            printf("\033[1;32m");
-            printf("%c ", GetSymbolForAction(GetActionAtLocation(&app->map, i - 1, j - 1)));
-            printf("\033[0m");
-        }
-
-        printf("\n");
-    }
-}
-
 void InitApplication(Application *app) {
     // Initialize the application
     ResetSimulator(&app->sim, 0, 0);
@@ -100,7 +66,7 @@ void InitApplication(Application *app) {
     LoadMap(&app->map, &app->sim, "../../config/basic/map.txt");
 
     printf("\n\nLoading configurations...\n");
-    for (int i = 0; i < 100; i += 2) {
+    for (int i = 0; i <= 100; i += 2) {
         PrintProgressBar(i, 100);
         usleep(5000);
     }
@@ -111,6 +77,32 @@ void InitApplication(Application *app) {
 
     app->isRunning = true;
 }
+
+/** Command Implementor */
+bool MoveSimulator(Application *app, int x, int y) {
+    char action = GetActionAtLocation(&app->map, GetX(&app->sim.position), GetY(&app->sim.position));
+    if (action == ACTION_OBSTACLE || action == ACTION_INVALID) {
+        printf("You can't move there. There's a wall!\n");
+        return false;
+    } 
+    
+    if (action == ACTION_BUY || action == ACTION_MIX || action == ACTION_CHOP || action == ACTION_FRY || action == ACTION_BOIL) {
+        printf("You can't move to tile action (%c)", GetSymbolForAction(action));
+        return false;
+    } 
+    
+    if (action == ACTION_NONE) {
+        SetSimulatorPosition(&app->sim, x, y);
+        printf("You moved to (%d, %d)\n", GetX(&app->sim.position), GetY(&app->sim.position));
+        return true;
+    }
+
+    printf("You cannot move there!");
+}
+
+/** Command Processor */
+static char command[50];
+static bool shouldNextLoop = true;
 
 void GetCommand(char *command) {
     printf("\nUse Command 'help' to see available commands!\n");
@@ -123,28 +115,65 @@ bool ProcessCommand(Application *app, char *command) {
     if (STR_EQ(command, "exit") || STR_EQ(command, "quit")) {
         app->isRunning = false;
         return true;
+    } else if (STR_EQ(command, "help")) {
+        ClearAndPrintHeader();
+        PrintHelp();
+        return false;
+    } else if (STR_EQ(command, "back")) {
+        PrintAppState(app);
+        return false;
+    } else if (STR_EQ(command, "legend")) {
+        ClearAndPrintHeader();
+        PrintLegend();
+        return false;
+    } else if (STR_EQ(command, "up") || STR_EQ(command, "down") || STR_EQ(command, "left") || STR_EQ(command, "right")) {
+        int x = GetX(&app->sim.position);
+        int y = GetY(&app->sim.position);
+
+        bool success = false;
+
+        if (STR_EQ(command, "up")) {
+            success = MoveSimulator(app, x - 1, y);
+        } else if (STR_EQ(command, "down")) {
+            success = MoveSimulator(app, x + 1, y);
+        } else if (STR_EQ(command, "left")) {
+            success = MoveSimulator(app, x, y - 1);
+        } else if (STR_EQ(command, "right")) {
+            success = MoveSimulator(app, x, y + 1);
+        }
+
+        if (!success) {
+            PrintAppState(app);
+        }
+
+        return success;
     } else {
-        printf("Unknown command\n");
-        return true;
-    }
-}
-
-static char command[50];
-static bool shouldNextLoop = true;
-
-void ExecuteApplicationLoop(Application *app) {
-    do {
-        // Display the application
         ClearAndPrintHeader();
         PrintMap(app);
         printf("\n");
         PrintSimulatorInfo(&app->sim);
+        printf("\nUnknown command: %s\n", strlen(command) > 0 ? command : "<empty>");
+        
+        return false;
+    }
+}
 
-        // Command processing
+
+void ExecuteApplicationLoop(Application *app) {
+    ClearAndPrintHeader();
+    PrintMap(app);
+    printf("\n");
+    PrintSimulatorInfo(&app->sim);
+
+    // Command processing
+    GetCommand(command);
+    shouldNextLoop = ProcessCommand(app, command);
+
+    while (!shouldNextLoop)
+    {
         GetCommand(command);
         shouldNextLoop = ProcessCommand(app, command);
-
-    } while (!shouldNextLoop);
+    }
 }
 
 void CleanUpApplication(Application *app) {
