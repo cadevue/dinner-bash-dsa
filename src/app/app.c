@@ -83,7 +83,8 @@ void InitApplication(Application *app) {
 }
 
 void UpdateApp(Application *app) {
-    UpdateDeliveryQueue(&app->deliveryQueue, &app->currentTime);
+    UpdateDeliveryQueue(&app->deliveryQueue, &app->sim.inventory, &app->currentTime);
+    UpdateInventory(&app->sim.inventory, &app->currentTime);
 }
 
 /** Command Implementor */
@@ -134,7 +135,6 @@ void GetCommand(char *command) {
 }
 
 bool ProcessCommand(Application *app, char *command) {
-
     /** Exit */
     if (STR_EQ(command, "exit") || STR_EQ(command, "quit")) {
         app->isRunning = false;
@@ -336,7 +336,7 @@ bool ProcessCommand(Application *app, char *command) {
 
     /** Unknown command */
     } else {
-        sprintf(message, "Executing unknown command: %s", strlen(command) > 0 ? command : "<empty>");
+        sprintf(message, "Unknown command: %s", strlen(command) > 0 ? command : "<empty>");
         AddLogMessage(message);
         PrintAppState(app);
         

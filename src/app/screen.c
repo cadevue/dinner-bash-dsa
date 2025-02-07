@@ -78,9 +78,6 @@ void PrintMap(const Application *app) {
 }
 
 
-void PrintInventory(Application *app) {
-    printf("\nInventory: Not Implemented\n");
-}
 
 #define BOX_WIDTH 48
 #define BOX_TOP            "<------------------------------------------------->"
@@ -89,8 +86,10 @@ void PrintInventory(Application *app) {
 
 #define CATALOG_HEADER     "|==================== \033[1mCATALOG\033[0m ====================|"
 #define RECIPE_HEADER      "|==================== \033[1mCOOKBOOK\033[0m ===================|"
-#define BUY_HEADER         "|================= \033[1mTELEPHONE\033[0m =====================|"
-#define DELIVERY_HEADER    "|================ \033[1mDELIVERY QUEUE\033[0m =================|"
+#define BUY_HEADER         "|=================== \033[1mTELEPHONE\033[0m ===================|"
+#define DELIVERY_HEADER    "|================= \033[1mDELIVERY QUEUE\033[0m ================|"
+#define INVENTORY_HEADER   "|=================== \033[1mINVENTORY\033[0m ===================|"
+
 
 void FormatCatalogItem(const FoodType* foodType) {
     char nameLine[BOX_WIDTH * 2] ;
@@ -222,6 +221,31 @@ void PrintDeliveryQueue(Application *app) {
         FormatDeliveryEntry(current, &app->currentTime);
         current = current->next;
     }
+    printf("\ntype 'back' to return to the map\n");
+}
+
+void PrintInventory(Application *app) {
+    printf("%s\n", BOX_TOP);
+    printf("%s\n", INVENTORY_HEADER);
+    if (app->sim.inventory.count == 0) {
+        printf("| \033[1;33mInventory is empty\033[0m%-*s |\n", BOX_WIDTH - 19, "");
+        printf("%s\n", BOX_BOTTOM);
+        return;
+    }
+
+    for (int i = 0; i < app->sim.inventory.count; i++) {
+        Food *food = GetInventoryElement(&app->sim.inventory, i);
+        char buffer[BOX_WIDTH * 2];
+        Duration timeRemaining = DurationBetween(&app->currentTime, &food->expiredTime);
+        DurationToString(&timeRemaining, buffer);
+
+        int nameLen = strlen(food->type->name);
+        printf("| \033[1;33m%s\033[0m%-*s |\n", food->type->name, BOX_WIDTH - nameLen - 1, "");
+        printf("| Will expire in: %s%-*s |\n", buffer, BOX_WIDTH - strlen(buffer) - 17, "");
+        printf("%s\n", BOX_MIDDLE);
+    }
+
+    printf("%s\n", BOX_BOTTOM);
     printf("\ntype 'back' to return to the map\n");
 }
 

@@ -20,10 +20,8 @@ Duration GetFoodTimeToExpire(const FoodType *FoodType);
 Duration GetFoorTimeToDeliver(const FoodType *FoodType);
 
 typedef struct { 
-    FoodType* type;
+    const FoodType* type;
     Time expiredTime;
 } Food;
 
-void ResetFood(Food *food, FoodType *type, Time currentTime);
-bool IsFoodExpired(const Food *food, const Time currentTime);
-bool IsFoodDelivered(const Food *food, const Time currentTime);
+void ResetFood(Food *food, const FoodType *type, Time currentTime);

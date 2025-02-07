@@ -77,10 +77,14 @@ void InsertDeliveryQueue(DeliveryQueue *deliveryQueue, const FoodType *foodType,
     deliveryQueue->count++;
 }
 
-void UpdateDeliveryQueue(DeliveryQueue *deliveryQueue, const Time *currentTime) {
+void UpdateDeliveryQueue(DeliveryQueue *deliveryQueue, Inventory* inventory, const Time *currentTime) {
     DeliveryQueueEntry *current = deliveryQueue->head;
     char message[128];
     while (current != nullptr && IsEqOrLater(currentTime, &current->deliveredTime)) {
+        Food food;
+        ResetFood(&food, current->foodType, current->deliveredTime);
+        InsertInventory(inventory, food);
+
         sprintf(message, "Item %s is delivered! the item has been added to inventory!", current->foodType->name);
         AddLogMessage(message);
 

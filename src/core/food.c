@@ -27,13 +27,9 @@ Duration GetFoorTimeToDeliver(const FoodType *food) {
 }
 
 /** Food Instance */
-void ResetFood(Food *food, FoodType *type, Time currentTime) {
+void ResetFood(Food *food, const FoodType *type, Time currentTime) {
     food->type = type;
     food->expiredTime = currentTime;
 
     AddDuration(&food->expiredTime, &type->timeToExpire);
-}
-
-bool IsFoodExpired(const Food *food, const Time currentTime) {
-    return IsEqOrLater(&food->expiredTime, &currentTime);
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "food.h"
 #include "time.h"
+#include "inventory.h"
 
 typedef struct DeliveryQueueEntry {
     const FoodType* foodType;
@@ -17,5 +18,5 @@ void ResetDeliveryQueue(DeliveryQueue *deliveryQueue);
 bool IsDeliveryQueueEmpty(const DeliveryQueue *deliveryQueue);
 int GetDeliveryQueueCount(const DeliveryQueue *deliveryQueue);
 void InsertDeliveryQueue(DeliveryQueue *deliveryQueue, const FoodType *foodType, const Time *currentTime);
-void UpdateDeliveryQueue(DeliveryQueue *deliveryQueue, const Time* currentTime);
+void UpdateDeliveryQueue(DeliveryQueue *deliveryQueue, Inventory *inventory, const Time *currentTime);
 void FreeDeliveryQueue(DeliveryQueue *deliveryQueue);

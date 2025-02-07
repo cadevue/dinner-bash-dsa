@@ -1,5 +1,8 @@
 #include "inventory.h"
+#include "time.h"
+#include "log.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 void ResetInventory(Inventory *inventory) {
     inventory->head = nullptr;
@@ -60,7 +63,6 @@ Food RemoveInventoryElement(Inventory *inventory, int index) {
 }
 
 void InsertInventory(Inventory *inventory, Food food) { 
-    // Insertiion like priority queue with time to expire as the priority
     InventoryElement *element = (InventoryElement *) malloc(sizeof(InventoryElement));
     element->data = food;
     element->next = nullptr;
@@ -85,26 +87,21 @@ void InsertInventory(Inventory *inventory, Food food) {
     }
 
     inventory->count++;
+
 }
 
 void UpdateInventory(Inventory *inventory, const Time* currentTime) {
     InventoryElement *current = inventory->head;
-    InventoryElement *prev = nullptr;
+    char message[128];
     while (current != nullptr && IsEqOrLater(currentTime, &current->data.expiredTime)) {
-        if (IsEqOrLater(currentTime, &current->data.expiredTime)) {
-            if (prev == nullptr) {
-                inventory->head = current->next;
-            } else {
-                prev->next = current->next;
-            }
+        sprintf(message, "Item %s is expired! the item has been removed from inventory!", current->data.type->name);
+        AddLogMessage(message);
 
-            free(current);
-            inventory->count--;
-        } else {
-            prev = current;
-        }
+        inventory->head = current->next;
+        free(current);
+        inventory->count--;
 
-        current = prev->next;
+        current = inventory->head;
     }
 }
 
