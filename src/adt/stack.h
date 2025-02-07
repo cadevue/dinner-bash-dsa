@@ -14,8 +14,9 @@ typedef struct {
 } Stack;
 
 void ResetStack(Stack *stack);
-bool IsEmpty(Stack *stack);
-bool IsFull(Stack *stack);
-void Push(Stack *stack, StackElement value);
-StackElement Pop(Stack *stack);
-StackElement Peek(Stack *stack);
+bool IsStackEmpty(Stack *stack);
+bool IsStackFull(Stack *stack);
+void StackPush(Stack *stack, StackElement value);
+StackElement StackPop(Stack *stack);
+StackElement StackPeek(Stack *stack);
+void ClearStack(Stack *stack);

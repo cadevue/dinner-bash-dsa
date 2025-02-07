@@ -26,7 +26,7 @@ A CLI program implemented in C about a cooking management game! Player can move 
 ### Windows
 1. Navigate to the project directory
 2. Run `.\scripts\build.bat` to compile the program. (It uses "MinGW Makefiles" generator as defaults. If yours is different, you can change it in the script)
-3. Run `.\scripts\run.bat` to run the program, or you can just immediately run the program in `build\bin\app.exe`
+3. Run `.\scripts\run.bat` to run the program, or you can just immediately run the program in `build\bin\app.exe`. Run the executable in the `build\bin` directory, not in the root directory (because of the relative path when loading the game config).
 
 ### Other Operating System
 1. Navigate to the project directory

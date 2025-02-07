@@ -26,4 +26,8 @@ bool IsEqOrLater(const Time *t1, const Time *t2);
 Duration DurationBetween(const Time *t1, const Time *t2);
 
 void PrintTime(const Time *t);
+void TimeToString(const Time *t, char *buffer);
 void DurationToString(const Duration *duration, char *buffer);
+
+int GetTotalMinutes(const Time *t);
+Duration TimeFromTotalMinutes(int totalMinutes);

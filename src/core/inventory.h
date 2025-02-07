@@ -2,6 +2,7 @@
 #include "food.h"
 #include "time.h"
 #include "../adt/tree.h"
+#include "../adt/stack.h"
 
 typedef struct InventoryElement {
     Food data;
@@ -14,7 +15,8 @@ typedef struct {
 } Inventory;
 
 void ResetInventory(Inventory *inventory);
-bool DoRecipe(Inventory *inventory, const Tree *recipe, const Time *currentTime);
+bool DoRecipe(Inventory *inventory, const Tree *recipe, const Time *currentTime, Stack *undoStack);
+bool RevertRecipe(Inventory *inventory, const Tree *recipe, const Time *currentTime, Stack *undoStack, Stack *redoStack);
 int GetInventoryAmountOfType(const Inventory *inventory, const FoodType *type);
 Food* GetInventoryElement(Inventory *inventory, int index);
 Food* GetInventoryElementOfType(Inventory *inventory, const FoodType *type);

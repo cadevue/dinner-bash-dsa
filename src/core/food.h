@@ -23,3 +23,4 @@ typedef struct {
 } Food;
 
 void ResetFood(Food *food, const FoodType *type, Time currentTime);
+void ResetFoodWithExpired(Food *food, const FoodType *type, Duration timeToExpire);

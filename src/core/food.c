@@ -17,3 +17,9 @@ void ResetFood(Food *food, const FoodType *type, Time currentTime) {
 
     AddDuration(&food->expiredTime, &type->timeToExpire);
 }
+
+void ResetFoodWithExpired(Food *food, const FoodType *type, Duration timeToExpire) {
+    food->type = type;
+    ResetTime(&food->expiredTime, 0, 0, 0);
+    AddDuration(&food->expiredTime, &timeToExpire);
+}

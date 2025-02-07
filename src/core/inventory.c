@@ -1,7 +1,9 @@
 #include "inventory.h"
 #include "time.h"
 #include "log.h"
+#include "action.h"
 #include "../adt/map.h"
+#include "../adt/stack.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -10,7 +12,7 @@ void ResetInventory(Inventory *inventory) {
     inventory->count = 0;
 }
 
-bool DoRecipe(Inventory *inventory, const Tree *recipe, const Time *currentTime) {
+bool DoRecipe(Inventory *inventory, const Tree *recipe, const Time *currentTime, Stack *undoStack) {
     // Check if possible to do the recipe
     Map occurences;
     ResetMap(&occurences);
@@ -37,9 +39,11 @@ bool DoRecipe(Inventory *inventory, const Tree *recipe, const Time *currentTime)
 
     for (int i = 0; i < recipe->childCount; i++) {
         FoodType *type = recipe->children[i]->data;
-        RemoveInventoryElementOfType(inventory, type);
+        Food removed = RemoveInventoryElementOfType(inventory, type);
         sprintf(message, "Item %s has been used to make %s", type->name, recipe->data->name);
         AddLogMessage(message);
+
+        StackPush(undoStack, (StackElement) {ACTION_USE_FOR_RECIPE, GetTotalMinutes(&removed.expiredTime), 0});
     }
 
     Food result;
@@ -52,7 +56,38 @@ bool DoRecipe(Inventory *inventory, const Tree *recipe, const Time *currentTime)
     sprintf(message, "Item %s has been successfully made! Will expire in %s", recipe->data->name, duration);
     AddLogMessage(message);
 
+    StackPush(undoStack, (StackElement) {recipe->data->actionType, GetTotalMinutes(&result.expiredTime), 0});
+
     return true;
+}
+
+bool RevertRecipe(Inventory *inventory, const Tree *recipe, const Time *currentTime, Stack *undoStack, Stack *redoStack) {
+    char message[128];
+    
+    FoodType *resultType = recipe->data;
+    Food result = RemoveInventoryElementOfType(inventory, resultType);
+    sprintf(message, "Made item %s has been reverted!", resultType->name);
+    AddLogMessage(message);
+
+    for (int i = 0; i < recipe->childCount; i++) {
+        FoodType *type = recipe->children[i]->data;
+        Food food;
+
+        StackElement element = StackPeek(undoStack);
+        Duration timeToExpire = TimeFromTotalMinutes(element.param1);
+        ResetFoodWithExpired(&food, type, timeToExpire);
+        InsertInventory(inventory, food);
+
+        char duration[32];
+        DurationToString(&timeToExpire, duration);
+        sprintf(message, "Item %s has been restored! Will expire in %s", type->name, duration);
+        AddLogMessage(message);
+
+        StackPop(undoStack);
+        StackPush(redoStack, element);
+    }
+
+    StackPush(redoStack, (StackElement) {resultType->actionType, GetTotalMinutes(&result.expiredTime), 0});
 }
 
 int GetInventoryAmountOfType(const Inventory *inventory, const FoodType *type) {

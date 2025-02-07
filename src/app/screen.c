@@ -282,7 +282,7 @@ void PrintBuyMenu(Application *app) {
     printf("\ntype 'back' to return to the map\n");
 }
 
-void FormatRecipeRoot(Tree *recipe) {
+void FormatRecipeRoot(Tree *recipe, int idx) {
     char nameLine[BOX_WIDTH * 2];
     char ingredientLines[BOX_WIDTH * 2 * MAX_TREE_CHILD_COUNT];
     char buffer[BOX_WIDTH * 2];
@@ -290,7 +290,7 @@ void FormatRecipeRoot(Tree *recipe) {
     // Name
     FoodType *foodType = recipe->data;
     int nameLen = strlen(foodType->name);
-    snprintf(nameLine, BOX_WIDTH * 2, "| \033[1;33m%s\033[0m%-*s |", foodType->name, BOX_WIDTH - nameLen - 1, "");
+    snprintf(nameLine, BOX_WIDTH * 2, "| \033[1;33m%d. %s\033[0m%-*s |", idx + 1, foodType->name, BOX_WIDTH - nameLen - 4, "");
 
     // Ingredients
     char *ingredientLine = ingredientLines;
@@ -324,7 +324,7 @@ void PrintMixMenu(Application *app) {
         return;
     }
     for (int i = 0; i < count; i++) {
-        FormatRecipeRoot(recipes[i]);
+        FormatRecipeRoot(recipes[i], i);
     }
     printf("\ntype 'back' to return to the map\n");
 }
@@ -343,7 +343,7 @@ void PrintChopMenu(Application *app) {
     }
 
     for (int i = 0; i < count; i++) {
-        FormatRecipeRoot(recipes[i]);
+        FormatRecipeRoot(recipes[i], i);
     }
     printf("\ntype 'back' to return to the map\n");
 }
@@ -361,7 +361,7 @@ void PrintFryMenu(Application *app) {
         return;
     }
     for (int i = 0; i < count; i++) {
-        FormatRecipeRoot(recipes[i]);
+        FormatRecipeRoot(recipes[i], i);
     }
     printf("\ntype 'back' to return to the map\n");
 }
@@ -379,7 +379,7 @@ void PrintBoilMenu(Application *app) {
         return;
     }
     for (int i = 0; i < count; i++) {
-        FormatRecipeRoot(recipes[i]);
+        FormatRecipeRoot(recipes[i], i);
     }
     printf("\ntype 'back' to return to the map\n");
 }

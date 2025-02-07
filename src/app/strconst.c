@@ -35,10 +35,9 @@ const char *SPLASH_SCREEN =
 "     Welcome to Dinner Bash : A CLI Cooking Management Game                                         \n"
 "     Made by Addin Munawwar Yusuf ( Cadevue )                                                       \n"
 "     C Programming  ||  Algorithm and Data Structure                                                \n"
-"\033[0m                                                                                                   \n"
-"                                                                                                    \n"
 "                                                                                                    \n"
 "     Press enter to continue . . .                                                                  \n"
+"\033[0m                                                                                                   \n"
 ;
 
 

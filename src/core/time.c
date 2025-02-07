@@ -82,6 +82,10 @@ void PrintTime(const Time *t) {
     printf("Day %d, %02d:%02d\n", t->day, t->hour, t->minute);
 }
 
+void TimeToString(const Time *t, char *buffer) {
+    sprintf(buffer, "Day %d, %02d:%02d", t->day, t->hour, t->minute);
+}
+
 void DurationToString(const Duration *duration, char *dest) {
     memset(dest, 0, sizeof(dest));
     if (duration->day > 0) {
@@ -110,4 +114,18 @@ void DurationToString(const Duration *duration, char *dest) {
     if (strlen(dest) == 0) {
         strcpy(dest, "Immediate");
     }
+}
+
+int GetTotalMinutes(const Time *t) {
+    return t->day * 24 * 60 + t->hour * 60 + t->minute;
+}
+
+Duration TimeFromTotalMinutes(int totalMinutes) {
+    Duration duration;
+    duration.day = totalMinutes / (24 * 60);
+    totalMinutes %= 24 * 60;
+    duration.hour = totalMinutes / 60;
+    duration.minute = totalMinutes % 60;
+
+    return duration;
 }
