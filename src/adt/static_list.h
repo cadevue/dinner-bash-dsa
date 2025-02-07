@@ -20,7 +20,6 @@ typedef union {
 /**  Static List is a fixed-size list with maximum size of STATIC_LIST_CAPACITY */
 typedef struct {
     StaticListElement data[STATIC_LIST_CAPACITY];
-    int actionCount[NUM_OF_ACTIONS];
     char type;
     int count;
 } StaticList;
@@ -36,7 +35,6 @@ StaticListElement* GetStaticListElement(StaticList *list, int index);
 FoodType* FindFoodTypeById(StaticList *list, int id);
 int FindFoodTypesByAction(StaticList *list, char action, FoodType **dest);
 int FindRecipesByAction(StaticList *list, char action, Tree **dest);
-int GetCountByActionType(StaticList *list, char action);
 
 // Insert only (on load). After that immutable
 void InsertLastStaticList(StaticList *list, StaticListElement element); 

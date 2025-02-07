@@ -5,9 +5,6 @@
 void ResetStaticList(StaticList *list, char type) {
     list->type = type;
     list->count = 0;
-    for (int i = 0; i < NUM_OF_ACTIONS; i++) {
-        list->actionCount[i] = 0;
-    }
 }
 
 char GetStaticListCount(const StaticList *list) { return list->count; }
@@ -58,17 +55,9 @@ int FindRecipesByAction(StaticList *list, char action, Tree **dest) {
     return count;
 }
 
-
-int GetCountByActionType(StaticList *list, char action) {
-    return list->actionCount[action];
-}
-
 void InsertLastStaticList(StaticList *list, StaticListElement element) {
     list->data[list->count] = element;
     list->count++;
-    if (list->type == TYPE_FOOD) {
-        list->actionCount[element.foodType.actionType]++;
-    }
 }
 
 void FreeStaticList(StaticList *list) {
