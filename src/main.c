@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "./app/app.h"
 #include "./app/screen.h"
+#include "./core/log.h"
 
 int main ()
 {
@@ -11,7 +12,10 @@ int main ()
 
     RegisterUser(app.sim.name);
 
+    ResetLog(&GlobalLog);
     InitApplication(&app);
+
+    AddLogMessage("Welcome to Dinner Bash");
 
     while (app.isRunning) {
         ExecuteApplicationLoop(&app);

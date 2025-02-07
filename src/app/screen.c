@@ -1,5 +1,6 @@
 #include "../core/simulator.h"
 #include "../core/action.h"
+#include "../core/log.h"
 #include "../adt/static_list.h"
 #include "screen.h"
 #include "strconst.h"

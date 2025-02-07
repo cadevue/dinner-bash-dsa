@@ -1,11 +1,11 @@
 6               # This is N (number of food)
 11              # Raw Chicken ID : 11
-Raw Chicken     
+Raw Chicken
 1 0 0           # Will be expired in 1 day
 0 0 15          # Delivery time is 15 minutesV
 Buy
 21              # Chopped Chicken ID : 21
-Chopped Chicken 
+Chopped Chicken
 0 2 0           # Will be expired in 2 hours
 0 0 0           # Not bought, so no delivery time
 Chop            # Action: chop to make it

@@ -1,5 +1,8 @@
 #include "delivery.h"
+#include "log.h"
+
 #include <stdlib.h>
+#include <stdio.h>
 
 void ResetDeliveryQueue(DeliveryQueue *deliveryQueue) {
     deliveryQueue->head = nullptr;
@@ -43,6 +46,7 @@ void InsertDeliveryQueue(DeliveryQueue *deliveryQueue, const FoodType *foodType,
     entry->foodType = foodType;
     entry->deliveredTime = *currentTime;
     AddDuration(&entry->deliveredTime, &foodType->timeToDeliver);
+    AddMinute(&entry->deliveredTime, 1); // Add 1 minute to make sure the item is delivered in the next minute
 
     entry->next = nullptr;
 
@@ -65,12 +69,21 @@ void InsertDeliveryQueue(DeliveryQueue *deliveryQueue, const FoodType *foodType,
         }
     }
 
+    char message[128];
+    char duration[32];
+    DurationToString(&foodType->timeToDeliver, duration);
+    sprintf(message, "%s order successful! Item will be delivered in %s", foodType->name, duration);
+    AddLogMessage(message);
     deliveryQueue->count++;
 }
 
 void UpdateDeliveryQueue(DeliveryQueue *deliveryQueue, const Time *currentTime) {
     DeliveryQueueEntry *current = deliveryQueue->head;
+    char message[128];
     while (current != nullptr && IsEqOrLater(currentTime, &current->deliveredTime)) {
+        sprintf(message, "Item %s is delivered! the item has been added to inventory!", current->foodType->name);
+        AddLogMessage(message);
+
         deliveryQueue->head = current->next;
         free(current);
         deliveryQueue->count--;
