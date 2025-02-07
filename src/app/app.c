@@ -78,6 +78,10 @@ void InitApplication(Application *app) {
     app->isRunning = true;
 }
 
+void UpdateApp(Application *app) {
+    UpdateDeliveryQueue(&app->deliveryQueue, &app->currentTime);
+}
+
 /** Command Implementor */
 bool MoveSimulator(Application *app, int x, int y, char *reason) {
     char action = GetElementAtLocation(&app->map, x, y);
@@ -206,19 +210,19 @@ bool ProcessCommand(Application *app, char *command) {
     /** Catalog */
     } else if (STR_EQ(command, "catalog")) {
         ClearAndPrintHeader();
-        PrintCatalogMenu(app);
+        PrintCatalog(app);
         return false;
 
     /** Recipe */
     } else if (STR_EQ(command, "cookbook")) {
         ClearAndPrintHeader();
-        PrintCookbookMenu(app);
+        PrintCookbook(app);
         return false;
 
     /** Delivery */
     } else if (STR_EQ(command, "delivery")) {
         ClearAndPrintHeader();
-        PrintDeliveryMenu(app);
+        PrintDeliveryQueue(app);
         return false;
 
     /** Buy */
@@ -242,12 +246,8 @@ bool ProcessCommand(Application *app, char *command) {
 
                 if (sscanf(internalCommand, "%d", &inputNum) == 1) {
                     if (inputNum > 0 && inputNum <= count) {
-                        Food food;
-
                         FoodType* type = FindFoodTypeByAction(&app->foodDirectory, ACTION_BUY, inputNum - 1);
-                        ResetFood(&food, type, app->currentTime);
-
-                        InsertInventory(&app->sim.inventory, food);
+                        InsertDeliveryQueue(&app->deliveryQueue, type, &app->currentTime);
 
                         success = true;
                         return true;
@@ -329,6 +329,7 @@ bool ProcessCommand(Application *app, char *command) {
 
 
 void ExecuteApplicationLoop(Application *app) {
+    UpdateApp(app);
     PrintAppState(app);
 
     // Command processing

@@ -41,15 +41,15 @@ DeliveryQueueEntry* GetDeliveryQueueElement(DeliveryQueue *deliveryQueue, int in
 }
 
 void InsertDeliveryQueue(DeliveryQueue *deliveryQueue, const FoodType *foodType, const Time* currentTime) {
-    DeliveryQueueEntry *element = (DeliveryQueueEntry *) malloc(sizeof(DeliveryQueueEntry));
-    element->foodType = foodType;
-    element->deliveredTime = *currentTime;
-    AddDuration(&element->deliveredTime, &foodType->timeToDeliver);
+    DeliveryQueueEntry *entry = (DeliveryQueueEntry *) malloc(sizeof(DeliveryQueueEntry));
+    entry->foodType = foodType;
+    entry->deliveredTime = *currentTime;
+    AddDuration(&entry->deliveredTime, &foodType->timeToDeliver);
 
-    element->next = nullptr;
+    entry->next = nullptr;
 
     if (deliveryQueue->head == nullptr) {
-        deliveryQueue->head = element;
+        deliveryQueue->head = entry;
     } else {
         DeliveryQueueEntry *current = deliveryQueue->head;
         DeliveryQueueEntry *prev = nullptr;
@@ -59,11 +59,11 @@ void InsertDeliveryQueue(DeliveryQueue *deliveryQueue, const FoodType *foodType,
         }
 
         if (prev == nullptr) {
-            element->next = deliveryQueue->head;
-            deliveryQueue->head = element;
+            entry->next = deliveryQueue->head;
+            deliveryQueue->head = entry;
         } else {
-            prev->next = element;
-            element->next = current;
+            prev->next = entry;
+            entry->next = current;
         }
     }
 
@@ -72,22 +72,12 @@ void InsertDeliveryQueue(DeliveryQueue *deliveryQueue, const FoodType *foodType,
 
 void UpdateDeliveryQueue(DeliveryQueue *deliveryQueue, const Time *currentTime) {
     DeliveryQueueEntry *current = deliveryQueue->head;
-    DeliveryQueueEntry *prev = nullptr;
     while (current != nullptr && IsEqOrLater(currentTime, &current->deliveredTime)) {
-        if (IsEqOrLater(currentTime, &current->deliveredTime)) {
-            if (prev == nullptr) {
-                deliveryQueue->head = current->next;
-            } else {
-                prev->next = current->next;
-            }
+        deliveryQueue->head = current->next;
+        free(current);
+        deliveryQueue->count--;
 
-            free(current);
-            deliveryQueue->count--;
-        } else {
-            prev = current;
-        }
-
-        current = prev->next;
+        current = deliveryQueue->head;
     }
 }
 

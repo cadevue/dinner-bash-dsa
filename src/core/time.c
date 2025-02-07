@@ -43,6 +43,25 @@ void AddDuration(Time *t, const Duration *duration) {
     AddMinute(t, duration->minute);
 }
 
+Duration DurationBetween(const Time *t1, const Time *t2) {
+    Duration duration;
+    duration.day    = t2->day - t1->day;
+    duration.hour   = t2->hour - t1->hour;
+    duration.minute = t2->minute - t1->minute;
+
+    if (duration.minute < 0) {
+        duration.minute += 60;
+        duration.hour--;
+    }
+
+    if (duration.hour < 0) {
+        duration.hour += 24;
+        duration.day--;
+    }
+
+    return duration;
+}
+
 bool IsEqOrLater(const Time *t1, const Time *t2) {
     if (t1->day > t2->day) {
         return true;

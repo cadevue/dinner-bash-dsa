@@ -13,9 +13,9 @@ void PrintProgressBar(int progress, int total);
 void PrintMap(const Application *app);
 
 void PrintInventory(Application *app);
-void PrintCatalogMenu(Application *app);
-void PrintCookbookMenu(Application *app);
-void PrintDeliveryMenu(Application *app);
+void PrintCatalog(Application *app);
+void PrintCookbook(Application *app);
+void PrintDeliveryQueue(Application *app);
 
 void PrintBuyMenu(Application *app);
 void PrintMixMenu(Application *app);

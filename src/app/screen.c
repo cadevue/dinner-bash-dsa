@@ -89,6 +89,7 @@ void PrintInventory(Application *app) {
 #define CATALOG_HEADER     "|==================== \033[1mCATALOG\033[0m ====================|"
 #define RECIPE_HEADER      "|==================== \033[1mCOOKBOOK\033[0m ===================|"
 #define BUY_HEADER         "|================= \033[1mTELEPHONE\033[0m =====================|"
+#define DELIVERY_HEADER    "|================ \033[1mDELIVERY QUEUE\033[0m =================|"
 
 void FormatCatalogItem(const FoodType* foodType) {
     char nameLine[BOX_WIDTH * 2] ;
@@ -126,7 +127,7 @@ void FormatCatalogItem(const FoodType* foodType) {
     printf("%s\n", BOX_BOTTOM);
 }
 
-void PrintCatalogMenu(Application *app) {
+void PrintCatalog(Application *app) {
     printf("%s\n", BOX_TOP);
     printf("%s\n", CATALOG_HEADER);
     for (int i = 0; i < app->foodDirectory.count; i++) {
@@ -173,7 +174,7 @@ void FormatCookbookItem(Tree *recipe, StaticList *foodDirectory) {
     printf("%s\n", BOX_BOTTOM);
 }
 
-void PrintCookbookMenu(Application *app) {
+void PrintCookbook(Application *app) {
     printf("%s\n", BOX_TOP);
     printf("%s\n", RECIPE_HEADER);
     for (int i = 0; i < app->recipes.count; i++) {
@@ -185,8 +186,42 @@ void PrintCookbookMenu(Application *app) {
     printf("\ntype 'back' to return to the map\n");
 }
 
-void PrintDeliveryMenu(Application *app) {
-    printf("\nDelivery: Not Implemented\n");
+void FormatDeliveryEntry(const DeliveryQueueEntry *entry, const Time *currentTime) {
+    char nameLine[BOX_WIDTH * 2];
+    char timeDeliverLine[BOX_WIDTH * 2];
+    char buffer[BOX_WIDTH * 2];
+
+    // Name
+    int nameLen = strlen(entry->foodType->name);
+    snprintf(nameLine, BOX_WIDTH * 2, "| \033[1;33m%s\033[0m%-*s |", entry->foodType->name, BOX_WIDTH - nameLen - 1, "");
+
+    // Time to Deliver
+    Duration timeRemaining = DurationBetween(currentTime, &entry->deliveredTime);
+    DurationToString(&timeRemaining, buffer);
+    int timeDeliverLen = strlen(buffer);
+    snprintf(timeDeliverLine, BOX_WIDTH * 2, "| Time Remaining: %s%-*s |", buffer, BOX_WIDTH - timeDeliverLen - 17, "");
+
+    printf("%s\n", BOX_TOP);
+    printf("%s\n", nameLine);
+    printf("%s\n", timeDeliverLine);
+    printf("%s\n", BOX_BOTTOM);
+}
+
+void PrintDeliveryQueue(Application *app) {
+    printf("%s\n", BOX_TOP);
+    printf("%s\n", DELIVERY_HEADER);
+    DeliveryQueueEntry *current = app->deliveryQueue.head;
+    if (current == NULL) {
+        printf("| \033[1;33mNo delivery in queue\033[0m%-*s |\n", BOX_WIDTH - 21, "");
+        printf("%s\n", BOX_BOTTOM);
+        return;
+    }
+
+    while (current != NULL) {
+        FormatDeliveryEntry(current, &app->currentTime);
+        current = current->next;
+    }
+    printf("\ntype 'back' to return to the map\n");
 }
 
 void PrintBuyMenu(Application *app) {
