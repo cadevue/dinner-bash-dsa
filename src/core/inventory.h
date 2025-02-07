@@ -15,9 +15,8 @@ typedef struct {
 void ResetInventory(Inventory *inventory);
 bool IsInventoryEmpty(const Inventory *inventory);
 int GetInventoryCount(const Inventory *inventory);
-int GetIndexOfInventory(const Inventory *inventory, Food food);
 Food* GetInventoryElement(Inventory *inventory, int index);
+Food RemoveInventoryElement(Inventory *inventory, int index);
 void InsertInventory(Inventory *inventory, Food food);
-Food RemoveFromInventory(Inventory *inventory, int index);
-void UpdateInventory(Inventory *inventory, Time currentTime);
+void UpdateInventory(Inventory *inventory, const Time* currentTime);
 void FreeInventory(Inventory *inventory);

@@ -5,6 +5,9 @@
 void ResetStaticList(StaticList *list, char type) {
     list->type = type;
     list->count = 0;
+    for (int i = 0; i < NUM_OF_ACTIONS; i++) {
+        list->actionCount[i] = 0;
+    }
 }
 
 char GetStaticListCount(const StaticList *list) {
@@ -49,6 +52,24 @@ FoodType* FindFoodTypeById(StaticList *list, int id) {
     return NULL;
 }
 
+FoodType* FindFoodTypeByAction(StaticList *list, char action, int index) {
+    int count = 0;
+    for (int i = 0; i < list->count; i++) {
+        if (list->data[i].foodType.actionType == action) {
+            if (count == index) {
+                return &list->data[i].foodType;
+            }
+            count++;
+        }
+    }
+
+    return NULL;
+}
+
+int GetCountByActionType(StaticList *list, char action) {
+    return list->actionCount[action];
+}
+
 void InsertFirstStaticList(StaticList *list, StaticListElement element) {
     list->count++;
 
@@ -59,11 +80,17 @@ void InsertFirstStaticList(StaticList *list, StaticListElement element) {
 
     // Insert the element at the first index
     list->data[0] = element;
+    if (list->type == TYPE_FOOD) {
+        list->actionCount[element.foodType.actionType]++;
+    }
 }
 
 void InsertLastStaticList(StaticList *list, StaticListElement element) {
     list->data[list->count] = element;
     list->count++;
+    if (list->type == TYPE_FOOD) {
+        list->actionCount[element.foodType.actionType]++;
+    }
 }
 
 void InsertAtStaticList(StaticList *list, int index, StaticListElement element) {
@@ -85,6 +112,9 @@ void InsertAtStaticList(StaticList *list, int index, StaticListElement element) 
             list->data[i] = list->data[i - 1];
         }
         list->data[index] = element;
+        if (list->type == TYPE_FOOD) {
+            list->actionCount[element.foodType.actionType]++;
+        }
     }
 }
 
@@ -101,12 +131,20 @@ StaticListElement RemoveFirstStaticList(StaticList *list) {
         list->data[i] = list->data[i + 1];
     }
 
+    if (list->type == TYPE_FOOD) {
+        list->actionCount[element.foodType.actionType]--;
+    }
+
     return element;
 }
 
 StaticListElement RemoveLastStaticList(StaticList *list) {
     if (list->count == 0) {
         return (StaticListElement) {0};
+    }
+
+    if (list->type == TYPE_FOOD) {
+        list->actionCount[list->data[list->count - 1].foodType.actionType]--;
     }
 
     list->count--;
@@ -126,8 +164,11 @@ StaticListElement RemoveAtStaticList(StaticList *list, int index) {
         list->data[i] = list->data[i + 1];
     }
 
-    return element;
+    if (list->type == TYPE_FOOD) {
+        list->actionCount[element.foodType.actionType]--;
+    }
 
+    return element;
 }
 
 void PrintStaticList(const StaticList *list) {

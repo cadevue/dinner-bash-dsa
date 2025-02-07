@@ -1,5 +1,6 @@
 #pragma once
 
+#define NUM_OF_ACTIONS  11
 #define ACTION_INVALID  0
 
 #define ACTION_NONE     1

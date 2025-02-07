@@ -17,8 +17,8 @@ void PrintCatalogMenu(Application *app);
 void PrintCookbookMenu(Application *app);
 void PrintDeliveryMenu(Application *app);
 
-void PrintBuyMenu(const Application *app);
-void PrintMixMenu(const Application *app);
-void PrintChopMenu(const Application *app);
-void PrintFryMenu(const Application *app);
-void PrintBoilMenu(const Application *app);
+void PrintBuyMenu(Application *app);
+void PrintMixMenu(Application *app);
+void PrintChopMenu(Application *app);
+void PrintFryMenu(Application *app);
+void PrintBoilMenu(Application *app);

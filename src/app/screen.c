@@ -88,6 +88,7 @@ void PrintInventory(Application *app) {
 
 #define CATALOG_HEADER     "|==================== \033[1mCATALOG\033[0m ====================|"
 #define RECIPE_HEADER      "|==================== \033[1mCOOKBOOK\033[0m ===================|"
+#define BUY_HEADER         "|================= \033[1mTELEPHONE\033[0m =====================|"
 
 void FormatCatalogItem(const FoodType* foodType) {
     char nameLine[BOX_WIDTH * 2] ;
@@ -131,7 +132,7 @@ void PrintCatalogMenu(Application *app) {
     for (int i = 0; i < app->foodDirectory.count; i++) {
         FormatCatalogItem(&GetStaticListElement(&app->foodDirectory, i)->foodType);
     }
-    printf("\ntype 'back' to return to the game\n");
+    printf("\ntype 'back' to return to the map\n");
 }
 
 void FormatCookbookItem(Tree *recipe, StaticList *foodDirectory) {
@@ -181,29 +182,51 @@ void PrintCookbookMenu(Application *app) {
             FormatCookbookItem(recipe, &app->foodDirectory);
         }
     }
-    printf("\ntype 'back' to return to the game\n");
+    printf("\ntype 'back' to return to the map\n");
 }
 
 void PrintDeliveryMenu(Application *app) {
     printf("\nDelivery: Not Implemented\n");
 }
 
-void PrintBuyMenu(const Application *app) {
-    printf("\nBuy: Not Implemented\n");
+void PrintBuyMenu(Application *app) {
+    printf("%s\n", BOX_TOP);
+    printf("%s\n", BUY_HEADER);
+    printf("%s\n", "| Here is the list of ingredients you can buy:    |");
+    printf("%s\n", BOX_MIDDLE);
+    int count = 1;
+    for (int i = 0; i < app->foodDirectory.count; i++) {
+        FoodType *foodType = &GetStaticListElement(&app->foodDirectory, i)->foodType;
+        if (foodType->actionType != ACTION_BUY) { continue; }
+
+        int nameLen = strlen(foodType->name);
+        printf("| \033[1;33m%d. %s\033[0m%-*s |\n", count, foodType->name, BOX_WIDTH - nameLen - 4, "");
+
+        char buffer[BOX_WIDTH * 2];
+        DurationToString(&foodType->timeToDeliver, buffer);
+        int timeDeliverLen = strlen(buffer);
+        printf("| Time to Deliver: %s%-*s |\n", buffer, BOX_WIDTH - timeDeliverLen - 18, "");
+        printf("%s\n", BOX_MIDDLE);
+
+        count++;
+    }
+    printf("%s\n", BOX_BOTTOM);
+    printf("\ntype the available number to buy the ingredient");
+    printf("\ntype 'back' to return to the map\n");
 }
 
-void PrintMixMenu(const Application *app) {
+void PrintMixMenu(Application *app) {
     printf("\nMix: Not Implemented\n");
 }
 
-void PrintChopMenu(const Application *app) {
+void PrintChopMenu(Application *app) {
     printf("\nChop: Not Implemented\n");
 }
 
-void PrintFryMenu(const Application *app) {
+void PrintFryMenu(Application *app) {
     printf("\nFry: Not Implemented\n");
 }
 
-void PrintBoilMenu(const Application *app) {
+void PrintBoilMenu(Application *app) {
     printf("\nBoil: Not Implemented\n");
 }

@@ -57,6 +57,7 @@ void InitApplication(Application *app) {
     ResetSimulator(&app->sim, 0, 0);
     ResetStack(&app->actions);
     ResetTime(&app->currentTime, 1, 8, 0);
+    ResetDeliveryQueue(&app->deliveryQueue);
 
     /** Temporary hardcoded path */
     LoadFoodTypes(&app->foodDirectory, "../../config/basic/foods.txt");
@@ -113,13 +114,14 @@ bool IsAdjacentToActionTile(const Application *app, char action) {
 }
 
 /** Command Processor */
-static char command[50];
+#define MAX_COMMAND_LEN 50
+static char command[MAX_COMMAND_LEN];
 static bool shouldNextLoop = true;
 
 void GetCommand(char *command) {
     printf("\nUse Command 'help' to see available commands!\n");
     printf("Enter command: ");
-    fgets(command, 50, stdin);
+    fgets(command, MAX_COMMAND_LEN, stdin);
     command[strlen(command) - 1] = '\0';
 }
 
@@ -228,10 +230,42 @@ bool ProcessCommand(Application *app, char *command) {
         } else {
             ClearAndPrintHeader();
             PrintBuyMenu(app);
+
+            char internalCommand[MAX_COMMAND_LEN];
+            bool success = false;
+
+            while (!success) {
+                GetCommand(internalCommand);
+
+                int inputNum;
+                int count = GetCountByActionType(&app->foodDirectory, ACTION_BUY);
+
+                if (sscanf(internalCommand, "%d", &inputNum) == 1) {
+                    if (inputNum > 0 && inputNum <= count) {
+                        Food food;
+
+                        FoodType* type = FindFoodTypeByAction(&app->foodDirectory, ACTION_BUY, inputNum - 1);
+                        ResetFood(&food, type, app->currentTime);
+
+                        InsertInventory(&app->sim.inventory, food);
+
+                        success = true;
+                        return true;
+                    } else {
+                        ClearAndPrintHeader();
+                        PrintBuyMenu(app);
+                        printf("\nInvalid index: %d, Choose between 1-%d\n", inputNum, count);
+                    }
+                } else if (STR_EQ(internalCommand, "back")) {
+                    PrintAppState(app);
+                    return false;
+                } else {
+                    ClearAndPrintHeader();
+                    PrintBuyMenu(app);
+                    printf("\nInvalid menu command: %s\nType 'back' to return to the map\n", internalCommand);
+                }
+            }
         }
-
-        return false;
-
     /** Mix */
     } else if (STR_EQ(command, "mix")) {
         if (!IsAdjacentToActionTile(app, ACTION_MIX)) {
@@ -309,4 +343,5 @@ void ExecuteApplicationLoop(Application *app) {
 void CleanUpApplication(Application *app) {
     FreeStaticList(&app->recipes);
     FreeSimulator(&app->sim);
+    FreeDeliveryQueue(&app->deliveryQueue);
 }

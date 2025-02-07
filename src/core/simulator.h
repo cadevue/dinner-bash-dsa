@@ -2,7 +2,6 @@
 
 #include "point.h"
 #include "inventory.h"
-#include "../adt/prio_queue.h"
 
 #define MAX_SIMULATOR_NAME_LEN 50
 

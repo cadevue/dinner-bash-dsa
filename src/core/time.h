@@ -20,7 +20,7 @@ void AddDay(Time *t, int day);
 void AddHour(Time *t, int hour);
 void AddMinute(Time *t, int minute);
 
-void AddDuration(Time *t, Duration *duration);
+void AddDuration(Time *t, const Duration *duration);
 
 bool IsEqOrLater(const Time *t1, const Time *t2);
 

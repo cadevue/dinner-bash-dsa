@@ -2,6 +2,7 @@
 
 #include "../core/boolean.h"
 #include "../core/food.h"
+#include "../core/action.h"
 #include "tree.h"
 
 #define STATIC_LIST_CAPACITY 50
@@ -19,6 +20,7 @@ typedef union {
 /**  Static List is a fixed-size list with maximum size of STATIC_LIST_CAPACITY */
 typedef struct {
     StaticListElement data[STATIC_LIST_CAPACITY];
+    int actionCount[NUM_OF_ACTIONS];
     char type;
     int count;
 } StaticList;
@@ -33,6 +35,8 @@ int GetIndexOfStaticList(const StaticList *list, StaticListElement element);
 StaticListElement* GetStaticListElement(StaticList *list, int index);
 
 FoodType* FindFoodTypeById(StaticList *list, int id);
+FoodType* FindFoodTypeByAction(StaticList *list, char action, int index);
+int GetCountByActionType(StaticList *list, char action);
 
 void InsertFirstStaticList(StaticList *list, StaticListElement element);
 void InsertLastStaticList(StaticList *list, StaticListElement element);

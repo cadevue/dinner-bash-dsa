@@ -88,7 +88,7 @@ const char * HELP_COMMANDS=
 "|                ingredients.                           |\n"
 "|   - cookbook  : Display all available recipes.        |\n"
 "|                                                       |\n"
-"| type 'back' to return to the game.                    |\n"
+"| type 'back' to return to the map.                     |\n"
 "<------------------------------------------------------->\n\n"
 ;
 
@@ -105,24 +105,6 @@ const char * LEGEND=
 "| \033[1;32mB\033[0m: Boiling Pot.                                       |\n"
 "| * : Border.                                           |\n"
 "|                                                       |\n"
-"| type 'back' to return to the game.                    |\n"
+"| type 'back' to return to the map.                     |\n"
 "<------------------------------------------------------->\n\n"
-;
-
-const char * INVENTORY_TEMPLATE =
-">---------------------------------<\n"
-"| <01>                            |\n"
-"| <Kacang Goreng>                 |\n"
-"| Expired at Day <d> hh:mm        |\n"
-"<--------------------------------->\n"
-;
-
-const char * RECIPE_TEMPLATE =
-">-------------------------------------<\n"
-"| <name>                              |\n"
-"| Ingredients:                        |\n"
-"|     - <ing.1>                       |\n"
-"|     - <ing.2>                       |\n"
-"|     - <ing.3>                       |\n"
-"<------------------------------------->\n"
 ;

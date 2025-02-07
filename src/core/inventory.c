@@ -40,6 +40,27 @@ Food* GetInventoryElement(Inventory *inventory, int index) {
     return &current->data;
 }
 
+Food RemoveInventoryElement(Inventory *inventory, int index) {
+    InventoryElement *current = inventory->head;
+    InventoryElement *prev = nullptr;
+    for (int i = 0; i < index; i++) {
+        prev = current;
+        current = current->next;
+    }
+
+    if (prev == nullptr) {
+        inventory->head = current->next;
+    } else {
+        prev->next = current->next;
+    }
+
+    Food data = current->data;
+    free(current);
+    inventory->count--;
+
+    return data;
+}
+
 void InsertInventory(Inventory *inventory, Food food) { 
     // Insertiion like priority queue with time to expire as the priority
     InventoryElement *element = (InventoryElement *) malloc(sizeof(InventoryElement));
@@ -68,36 +89,11 @@ void InsertInventory(Inventory *inventory, Food food) {
     inventory->count++;
 }
 
-Food RemoveFromInventory(Inventory *inventory, int index) {
-    if (index < 0 || index >= inventory->count) {
-        return (Food) {0};
-    }
-
+void UpdateInventory(Inventory *inventory, const Time* currentTime) {
     InventoryElement *current = inventory->head;
     InventoryElement *prev = nullptr;
-    for (int i = 0; i < index; i++) {
-        prev = current;
-        current = current->next;
-    }
-
-    if (prev == nullptr) {
-        inventory->head = current->next;
-    } else {
-        prev->next = current->next;
-    }
-
-    Food data = current->data;
-    free(current);
-    inventory->count--;
-
-    return data;
-}
-
-void UpdateInventory(Inventory *inventory, Time currentTime) {
-    InventoryElement *current = inventory->head;
-    InventoryElement *prev = nullptr;
-    while (current != nullptr && IsEqOrLater(&currentTime, &current->data.expiredTime)) {
-        if (IsEqOrLater(&currentTime, &current->data.expiredTime)) {
+    while (current != nullptr && IsEqOrLater(currentTime, &current->data.expiredTime)) {
+        if (IsEqOrLater(currentTime, &current->data.expiredTime)) {
             if (prev == nullptr) {
                 inventory->head = current->next;
             } else {

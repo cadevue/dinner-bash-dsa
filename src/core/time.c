@@ -37,7 +37,7 @@ void AddMinute(Time *t, int minute) {
     }
 }
 
-void AddDuration(Time *t, Duration *duration) {
+void AddDuration(Time *t, const Duration *duration) {
     AddDay(t, duration->day);
     AddHour(t, duration->hour);
     AddMinute(t, duration->minute);
