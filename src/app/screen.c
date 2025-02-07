@@ -133,6 +133,7 @@ void FormatCatalogItem(const FoodType* foodType) {
 void PrintCatalog(Application *app) {
     printf("%s\n", BOX_TOP);
     printf("%s\n", CATALOG_HEADER);
+    printf("%s\n", BOX_TOP);
     for (int i = 0; i < app->foodDirectory.count; i++) {
         FormatCatalogItem(&GetStaticListElement(&app->foodDirectory, i)->foodType);
     }
@@ -180,6 +181,7 @@ void FormatCookbookItem(Tree *recipe) {
 void PrintCookbook(Application *app) {
     printf("%s\n", BOX_TOP);
     printf("%s\n", RECIPE_HEADER);
+    printf("%s\n", BOX_TOP);
     for (int i = 0; i < app->recipes.count; i++) {
         Tree *recipe = (Tree *)GetStaticListElement(&app->recipes, i)->recipe;
         if (recipe->childCount != 0) {
@@ -204,7 +206,6 @@ void FormatDeliveryEntry(const DeliveryQueueEntry *entry, const Time *currentTim
     int timeDeliverLen = strlen(buffer);
     snprintf(timeDeliverLine, BOX_WIDTH * 2, "| Time Remaining: %s%-*s |", buffer, BOX_WIDTH - timeDeliverLen - 17, "");
 
-    printf("%s\n", BOX_TOP);
     printf("%s\n", nameLine);
     printf("%s\n", timeDeliverLine);
     printf("%s\n", BOX_BOTTOM);
@@ -213,6 +214,7 @@ void FormatDeliveryEntry(const DeliveryQueueEntry *entry, const Time *currentTim
 void PrintDeliveryQueue(Application *app) {
     printf("%s\n", BOX_TOP);
     printf("%s\n", DELIVERY_HEADER);
+    printf("%s\n", BOX_TOP);
     DeliveryQueueEntry *current = app->deliveryQueue.head;
     if (current == NULL) {
         printf("| \033[1;33mNo delivery in queue\033[0m%-*s |\n", BOX_WIDTH - 21, "");
@@ -230,6 +232,7 @@ void PrintDeliveryQueue(Application *app) {
 void PrintInventory(Application *app) {
     printf("%s\n", BOX_TOP);
     printf("%s\n", INVENTORY_HEADER);
+    printf("%s\n", BOX_TOP);
     if (app->sim.inventory.count == 0) {
         printf("| \033[1;33mInventory is empty\033[0m%-*s |\n", BOX_WIDTH - 19, "");
         printf("%s\n", BOX_BOTTOM);
@@ -255,6 +258,7 @@ void PrintInventory(Application *app) {
 void PrintBuyMenu(Application *app) {
     printf("%s\n", BOX_TOP);
     printf("%s\n", BUY_HEADER);
+    printf("%s\n", BOX_TOP);
     printf("%s\n", "| Here is the list of ingredients you can buy:    |");
     printf("%s\n", BOX_MIDDLE);
     int count = 1;
@@ -311,6 +315,7 @@ void FormatRecipeRoot(Tree *recipe) {
 void PrintMixMenu(Application *app) {
     printf("%s\n", BOX_TOP);
     printf("%s\n", MIX_HEADER);
+    printf("%s\n", BOX_TOP);
     Tree* recipes[STATIC_LIST_CAPACITY];
     int count = FindRecipesByAction(&app->recipes, ACTION_MIX, recipes);
     if (count == 0) {
@@ -327,6 +332,7 @@ void PrintMixMenu(Application *app) {
 void PrintChopMenu(Application *app) {
     printf("%s\n", BOX_TOP);
     printf("%s\n", CHOP_HEADER);
+    printf("%s\n", BOX_TOP);
     Tree* recipes[STATIC_LIST_CAPACITY];
     int count = FindRecipesByAction(&app->recipes, ACTION_CHOP, recipes);
     if (count == 0) {
@@ -345,6 +351,7 @@ void PrintChopMenu(Application *app) {
 void PrintFryMenu(Application *app) {
     printf("%s\n", BOX_TOP);
     printf("%s\n", FRY_HEADER);
+    printf("%s\n", BOX_TOP);
     Tree* recipes[STATIC_LIST_CAPACITY];
     int count = FindRecipesByAction(&app->recipes, ACTION_FRY, recipes);
     if (count == 0) {
@@ -362,6 +369,7 @@ void PrintFryMenu(Application *app) {
 void PrintBoilMenu(Application *app) {
     printf("%s\n", BOX_TOP);
     printf("%s\n", BOIL_HEADER);
+    printf("%s\n", BOX_TOP);
     Tree* recipes[STATIC_LIST_CAPACITY];
     int count = FindRecipesByAction(&app->recipes, ACTION_BOIL, recipes);
     if (count == 0) {

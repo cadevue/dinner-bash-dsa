@@ -47,7 +47,7 @@ void InsertDeliveryQueue(DeliveryQueue *deliveryQueue, const FoodType *foodType,
     } else {
         DeliveryQueueEntry *current = deliveryQueue->head;
         DeliveryQueueEntry *prev = nullptr;
-        while (current != nullptr && IsEqOrLater(currentTime, &current->deliveredTime)) {
+        while (current != nullptr && !IsEqOrLater(currentTime, &current->deliveredTime)) {
             prev = current;
             current = current->next;
         }

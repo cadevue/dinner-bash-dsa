@@ -1,12 +1,58 @@
 #include "inventory.h"
 #include "time.h"
 #include "log.h"
+#include "../adt/map.h"
 #include <stdlib.h>
 #include <stdio.h>
 
 void ResetInventory(Inventory *inventory) {
     inventory->head = nullptr;
     inventory->count = 0;
+}
+
+bool DoRecipe(Inventory *inventory, const Tree *recipe, const Time *currentTime) {
+    // Check if possible to do the recipe
+    Map occurences;
+    ResetMap(&occurences);
+
+    char message[128];
+    for (int i = 0; i < recipe->childCount; i++) // Potential Overhead
+    {
+        FoodType *type = recipe->children[i]->data;
+        int required = GetMapValue(&occurences, type->id) + 1;
+        int available = GetInventoryAmountOfType(inventory, type);
+
+        if (required > available) {
+            FreeMap(&occurences);
+
+            sprintf(message, "Failed to cook %s: Not enough %s", recipe->data->name, type->name);
+            AddLogMessage(message);
+
+            return false;
+        }
+    }
+
+    // Possible
+    FreeMap(&occurences);
+
+    for (int i = 0; i < recipe->childCount; i++) {
+        FoodType *type = recipe->children[i]->data;
+        RemoveInventoryElementOfType(inventory, type);
+        sprintf(message, "Item %s has been used to make %s", type->name, recipe->data->name);
+        AddLogMessage(message);
+    }
+
+    Food result;
+    ResetFood(&result, recipe->data, *currentTime);
+
+    InsertInventory(inventory, result);
+
+    char duration[32];
+    DurationToString(&recipe->data->timeToExpire, duration);
+    sprintf(message, "Item %s has been successfully made! Will expire in %s", recipe->data->name, duration);
+    AddLogMessage(message);
+
+    return true;
 }
 
 int GetInventoryAmountOfType(const Inventory *inventory, const FoodType *type) {

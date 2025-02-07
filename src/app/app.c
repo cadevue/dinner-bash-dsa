@@ -12,6 +12,10 @@
 #define STR_EQ(s1, s2) (strcasecmp(s1, s2) == 0)
 #define STR_START_WITH(s1, s2) (strncasecmp(s1, s2, strlen(s2)) == 0)
 
+#define MAX_COMMAND_LEN 50
+static char command[MAX_COMMAND_LEN];
+static bool shouldNextLoop = true;
+
 static char message[MAX_LOG_MESSAGE_LENGTH]; // shared free-to-use buffer for logging purposes
 
 void ClearAndPrintHeader() {
@@ -121,10 +125,15 @@ bool IsAdjacentToActionTile(const Application *app, char action) {
     return false;
 }
 
-/** Command Processor */
-#define MAX_COMMAND_LEN 50
-static char command[MAX_COMMAND_LEN];
-static bool shouldNextLoop = true;
+void PrintActionMenu(Application *app, char action) {
+    switch (action) {
+        case ACTION_MIX: PrintMixMenu(app); break;
+        case ACTION_CHOP: PrintChopMenu(app); break;
+        case ACTION_FRY: PrintFryMenu(app); break;
+        case ACTION_BOIL: PrintBoilMenu(app); break;
+        default: break;
+    }
+}
 
 void GetCommand(char *command) {
     printf("\nUse Command 'help' to see available commands!\n");
@@ -132,6 +141,49 @@ void GetCommand(char *command) {
     fgets(command, MAX_COMMAND_LEN, stdin);
     command[strlen(command) - 1] = '\0';
 }
+
+bool ExecuteAction(Application* app, char action) {
+    ClearAndPrintHeader();
+    PrintActionMenu(app, action);
+
+    char internalCommand[MAX_COMMAND_LEN];
+    bool success = false;
+
+    int inputNum;
+    Tree* recipes[STATIC_LIST_CAPACITY];
+    int count = FindRecipesByAction(&app->recipes, action, recipes);
+
+    while (!success) {
+        GetCommand(internalCommand);
+
+        if (sscanf(internalCommand, "%d", &inputNum) == 1) {
+            if (inputNum > 0 && inputNum <= count) {
+                Tree* recipe = recipes[inputNum - 1];
+
+                success = DoRecipe(&app->sim.inventory, recipe, &app->currentTime);
+                if (success) { 
+                    return true;
+                }
+
+                PrintAppState(app);
+                return false;
+            } else {
+                ClearAndPrintHeader();
+                PrintActionMenu(app, action);
+                printf("\nInvalid index: %d, Choose between 1-%d\n", inputNum, count);
+            }
+        } else if (STR_EQ(internalCommand, "back")) {
+            PrintAppState(app);
+            return false;
+        } else {
+            ClearAndPrintHeader();
+            PrintActionMenu(app, action);
+            printf("\nInvalid menu command: %s\nType 'back' to return to the map\n", internalCommand);
+        }
+    }
+}
+
+/** Command Processor */
 
 bool ProcessCommand(Application *app, char *command) {
     /** Exit */
@@ -289,11 +341,8 @@ bool ProcessCommand(Application *app, char *command) {
             PrintAppState(app);
             return false;
         } else {
-            ClearAndPrintHeader();
-            PrintMixMenu(app);
+            return ExecuteAction(app, ACTION_MIX);
         }
-
-        return false;
 
     /** Chop */
     } else if (STR_EQ(command, "chop")) {
@@ -302,12 +351,8 @@ bool ProcessCommand(Application *app, char *command) {
             PrintAppState(app);
             return false;
         } else {
-            ClearAndPrintHeader();
-            PrintChopMenu(app);
+            return ExecuteAction(app, ACTION_CHOP);
         }
-
-        return false;
-
     /** Fry */
     } else if (STR_EQ(command, "fry")) {
         if (!IsAdjacentToActionTile(app, ACTION_FRY)) {
@@ -315,8 +360,7 @@ bool ProcessCommand(Application *app, char *command) {
             PrintAppState(app);
             return false;
         } else {
-            ClearAndPrintHeader();
-            PrintFryMenu(app);
+            return ExecuteAction(app, ACTION_FRY);
         }
         
         return false;
@@ -328,8 +372,7 @@ bool ProcessCommand(Application *app, char *command) {
             PrintAppState(app);
             return false;
         } else {
-            ClearAndPrintHeader();
-            PrintBoilMenu(app);
+            return ExecuteAction(app, ACTION_BOIL);
         }
 
         return false;
