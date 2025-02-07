@@ -10,27 +10,9 @@ void ResetStaticList(StaticList *list, char type) {
     }
 }
 
-char GetStaticListCount(const StaticList *list) {
-    return list->count;
-}
-
-bool IsStaticListFull(const StaticList *list) { 
-    return list->count == STATIC_LIST_CAPACITY;
-}
-
-bool IsStaticListEmpty(const StaticList *list) { 
-    return list->count == 0;
-}
-
-int GetIndexOfStaticList(const StaticList *list, StaticListElement element) {
-    for (int i = 0; i < list->count; i++) {
-        if (SL_ELMT_EQUAL(list->data[i], element)) {
-            return i;
-        }
-    }
-
-    return -1;
-}
+char GetStaticListCount(const StaticList *list) { return list->count; }
+bool IsStaticListFull(const StaticList *list) { return list->count == STATIC_LIST_CAPACITY; }
+bool IsStaticListEmpty(const StaticList *list) { return list->count == 0; }
 
 StaticListElement* GetStaticListElement(StaticList *list, int index)
 {
@@ -52,37 +34,20 @@ FoodType* FindFoodTypeById(StaticList *list, int id) {
     return NULL;
 }
 
-FoodType* FindFoodTypeByAction(StaticList *list, char action, int index) {
+int FindFoodTypesByAction(StaticList *list, char action, FoodType **dest) {
     int count = 0;
     for (int i = 0; i < list->count; i++) {
         if (list->data[i].foodType.actionType == action) {
-            if (count == index) {
-                return &list->data[i].foodType;
-            }
+            dest[count] = &list->data[i].foodType;
             count++;
         }
     }
 
-    return NULL;
+    return count;
 }
 
 int GetCountByActionType(StaticList *list, char action) {
     return list->actionCount[action];
-}
-
-void InsertFirstStaticList(StaticList *list, StaticListElement element) {
-    list->count++;
-
-    // Shift all elements to the right
-    for (int i = list->count - 1; i > 0; i--) {
-        list->data[i] = list->data[i - 1];
-    }
-
-    // Insert the element at the first index
-    list->data[0] = element;
-    if (list->type == TYPE_FOOD) {
-        list->actionCount[element.foodType.actionType]++;
-    }
 }
 
 void InsertLastStaticList(StaticList *list, StaticListElement element) {
@@ -91,100 +56,6 @@ void InsertLastStaticList(StaticList *list, StaticListElement element) {
     if (list->type == TYPE_FOOD) {
         list->actionCount[element.foodType.actionType]++;
     }
-}
-
-void InsertAtStaticList(StaticList *list, int index, StaticListElement element) {
-    if (index < 0 || index > list->count) {
-        return;
-    }
-
-    if (index == list->count) {
-        InsertLastStaticList(list, element);
-        return;
-    } else if (index == 0) {
-        InsertFirstStaticList(list, element);
-        return;
-    } else {
-        list->count++;
-
-        // Shift data after the index to the right
-        for (int i = list->count - 1; i > index; i--) {
-            list->data[i] = list->data[i - 1];
-        }
-        list->data[index] = element;
-        if (list->type == TYPE_FOOD) {
-            list->actionCount[element.foodType.actionType]++;
-        }
-    }
-}
-
-StaticListElement RemoveFirstStaticList(StaticList *list) {
-    if (list->count == 0) {
-        return (StaticListElement) {0};
-    }
-
-    StaticListElement element = list->data[0];
-    list->count--;
-
-    // Shift all elements to the left
-    for (int i = 0; i < list->count; i++) {
-        list->data[i] = list->data[i + 1];
-    }
-
-    if (list->type == TYPE_FOOD) {
-        list->actionCount[element.foodType.actionType]--;
-    }
-
-    return element;
-}
-
-StaticListElement RemoveLastStaticList(StaticList *list) {
-    if (list->count == 0) {
-        return (StaticListElement) {0};
-    }
-
-    if (list->type == TYPE_FOOD) {
-        list->actionCount[list->data[list->count - 1].foodType.actionType]--;
-    }
-
-    list->count--;
-    return list->data[list->count];
-
-}
-StaticListElement RemoveAtStaticList(StaticList *list, int index) {
-    if (index < 0 || index >= list->count) {
-        return (StaticListElement) {0};
-    }
-
-    StaticListElement element = list->data[index];
-    list->count--;
-
-    // Shift all elements after the index to the left
-    for (int i = index; i < list->count; i++) {
-        list->data[i] = list->data[i + 1];
-    }
-
-    if (list->type == TYPE_FOOD) {
-        list->actionCount[element.foodType.actionType]--;
-    }
-
-    return element;
-}
-
-void PrintStaticList(const StaticList *list) {
-    printf("[");
-    for (int i = 0; i < list->count; i++) {
-        if (list->type == TYPE_FOOD) {
-            printf("%s,", list->data[i].foodType.name);
-        } else if (list->type == TYPE_RECIPE) {
-            printf("%d,", list->data[i].recipe->data);
-        } else {
-            printf("Unknown type\n");
-            break;
-        }
-    }
-
-    printf("]\n");
 }
 
 void FreeStaticList(StaticList *list) {

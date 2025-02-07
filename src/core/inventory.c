@@ -9,12 +9,18 @@ void ResetInventory(Inventory *inventory) {
     inventory->count = 0;
 }
 
-bool IsInventoryEmpty(const Inventory *inventory) {
-    return inventory->count == 0;
-}
+int GetInventoryAmountOfType(const Inventory *inventory, const FoodType *type) {
+    InventoryElement *current = inventory->head;
+    int count = 0;
+    while (current != nullptr) {
+        if (current->data.type->id == type->id) {
+            count++;
+        }
 
-int GetInventoryCount(const Inventory *inventory) {
-    return inventory->count;
+        current = current->next;
+    }
+
+    return count;
 }
 
 int GetIndexOfInventory(const Inventory *inventory, Food food) {
@@ -41,6 +47,19 @@ Food* GetInventoryElement(Inventory *inventory, int index) {
     return &current->data;
 }
 
+Food* GetInventoryElementOfType(Inventory *inventory, const FoodType *type) {
+    InventoryElement *current = inventory->head;
+    while (current != nullptr) {
+        if (current->data.type->id == type->id) {
+            return &current->data;
+        }
+
+        current = current->next;
+    }
+
+    return nullptr;
+}
+
 Food RemoveInventoryElement(Inventory *inventory, int index) {
     InventoryElement *current = inventory->head;
     InventoryElement *prev = nullptr;
@@ -60,6 +79,30 @@ Food RemoveInventoryElement(Inventory *inventory, int index) {
     inventory->count--;
 
     return data;
+}
+
+Food RemoveInventoryElementOfType(Inventory *inventory, const FoodType *type) {
+    InventoryElement *current = inventory->head;
+    InventoryElement *prev = nullptr;
+    while (current != nullptr) {
+        if (current->data.type->id == type->id) {
+            if (prev == nullptr) {
+                inventory->head = current->next;
+            } else {
+                prev->next = current->next;
+            }
+
+            Food data = current->data;
+            InventoryElement *next = current->next;
+            free(current);
+            current = next;
+            inventory->count--;
+            return data;
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
 }
 
 void InsertInventory(Inventory *inventory, Food food) { 

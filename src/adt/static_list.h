@@ -26,25 +26,17 @@ typedef struct {
 } StaticList;
 
 void ResetStaticList(StaticList *list, char type);
-char GetStaticListCount(const StaticList *list);
 
+char GetStaticListCount(const StaticList *list);
 bool IsStaticListFull(const StaticList *list);
 bool IsStaticListEmpty(const StaticList *list);
 
-int GetIndexOfStaticList(const StaticList *list, StaticListElement element);
 StaticListElement* GetStaticListElement(StaticList *list, int index);
 
 FoodType* FindFoodTypeById(StaticList *list, int id);
-FoodType* FindFoodTypeByAction(StaticList *list, char action, int index);
+int FindFoodTypesByAction(StaticList *list, char action, FoodType **dest);
 int GetCountByActionType(StaticList *list, char action);
 
-void InsertFirstStaticList(StaticList *list, StaticListElement element);
-void InsertLastStaticList(StaticList *list, StaticListElement element);
-void InsertAtStaticList(StaticList *list, int index, StaticListElement element);
-
-StaticListElement RemoveFirstStaticList(StaticList *list);
-StaticListElement RemoveLastStaticList(StaticList *list);
-StaticListElement RemoveAtStaticList(StaticList *list, int index);
-
-void PrintStaticList(const StaticList *list);
+// Insert only (on load). After that immutable
+void InsertLastStaticList(StaticList *list, StaticListElement element); 
 void FreeStaticList(StaticList *list);

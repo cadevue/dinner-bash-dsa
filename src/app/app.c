@@ -12,7 +12,7 @@
 #define STR_EQ(s1, s2) (strcasecmp(s1, s2) == 0)
 #define STR_START_WITH(s1, s2) (strncasecmp(s1, s2, strlen(s2)) == 0)
 
-static char message[MAX_LOG_MESSAGE_LENGTH]; // Buffer for logging purposes
+static char message[MAX_LOG_MESSAGE_LENGTH]; // shared free-to-use buffer for logging purposes
 
 void ClearAndPrintHeader() {
     ClearScreen();
@@ -59,13 +59,12 @@ bool IsValidName(const char *name) {
 void InitApplication(Application *app) {
     // Initialize the application
     ResetSimulator(&app->sim, 0, 0);
-    ResetStack(&app->actions);
     ResetTime(&app->currentTime, 1, 8, 0);
     ResetDeliveryQueue(&app->deliveryQueue);
 
     /** Temporary hardcoded path */
     LoadFoodTypes(&app->foodDirectory, "../../config/basic/foods.txt");
-    LoadRecipes(&app->recipes, "../../config/basic/recipes.txt");
+    LoadRecipes(&app->recipes, &app->foodDirectory, "../../config/basic/recipes.txt");
     LoadMap(&app->map, &app->sim, "../../config/basic/map.txt");
 
     // printf("\n\nLoading configurations...\n");
@@ -258,11 +257,12 @@ bool ProcessCommand(Application *app, char *command) {
                 GetCommand(internalCommand);
 
                 int inputNum;
-                int count = GetCountByActionType(&app->foodDirectory, ACTION_BUY);
+                FoodType* types[STATIC_LIST_CAPACITY];
+                int count = FindFoodTypesByAction(&app->foodDirectory, ACTION_BUY, types);
 
                 if (sscanf(internalCommand, "%d", &inputNum) == 1) {
                     if (inputNum > 0 && inputNum <= count) {
-                        FoodType* type = FindFoodTypeByAction(&app->foodDirectory, ACTION_BUY, inputNum - 1);
+                        FoodType* type = types[inputNum - 1];
                         InsertDeliveryQueue(&app->deliveryQueue, type, &app->currentTime);
 
                         success = true;

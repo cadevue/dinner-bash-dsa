@@ -4,6 +4,8 @@
 #include "boolean.h"
 
 #define MAX_FOOD_NAME_LENGTH 50
+
+// Food Type
 typedef struct {
     int id;
     char name[MAX_FOOD_NAME_LENGTH];
@@ -12,13 +14,9 @@ typedef struct {
     Duration timeToDeliver;
 } FoodType;
 
+void ResetFoodType(FoodType *foodType, int id, const char *name, char action, Duration timeToExpire, Duration timeToDeliver);
 
-void ResetFoodType(FoodType *foodType, int id, const char *name, char action, Time expiredTime, Duration deliveryDuration);
-int GetFoodId(const FoodType *foodType);
-const char *GetFoodName(const FoodType *FoodType);
-Duration GetFoodTimeToExpire(const FoodType *FoodType);
-Duration GetFoorTimeToDeliver(const FoodType *FoodType);
-
+// Food Instance
 typedef struct { 
     const FoodType* type;
     Time expiredTime;

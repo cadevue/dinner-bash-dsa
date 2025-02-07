@@ -15,8 +15,6 @@ typedef struct {
 } DeliveryQueue;
 
 void ResetDeliveryQueue(DeliveryQueue *deliveryQueue);
-bool IsDeliveryQueueEmpty(const DeliveryQueue *deliveryQueue);
-int GetDeliveryQueueCount(const DeliveryQueue *deliveryQueue);
 void InsertDeliveryQueue(DeliveryQueue *deliveryQueue, const FoodType *foodType, const Time *currentTime);
 void UpdateDeliveryQueue(DeliveryQueue *deliveryQueue, Inventory *inventory, const Time *currentTime);
 void FreeDeliveryQueue(DeliveryQueue *deliveryQueue);

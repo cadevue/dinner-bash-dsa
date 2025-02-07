@@ -12,8 +12,5 @@ typedef struct {
 } Matrix;
 
 void ResetMatrix(Matrix *mat, int rowEff, int colEff);
-int GetMatrixRowEff(const Matrix *mat);
-int GetMatrixColEff(const Matrix *mat);
-
 void SetMatrixElement(Matrix *mat, int row, int col, char element);
 char GetElementAtLocation(const Matrix *mat, int x, int y);

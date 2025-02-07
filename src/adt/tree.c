@@ -1,19 +1,12 @@
 #include "tree.h"
 
-void ResetTree(Tree *tree) {
+void ResetTree(Tree *tree, FoodType *data) {
     tree->childCount = 0;
-}
-
-bool IsTreeEmpty(const Tree *tree) {
-    return tree->childCount == 0;
+    tree->data = data;
 }
 
 bool IsTreeChildrenFull(const Tree *tree) {
     return tree->childCount == MAX_TREE_CHILD_COUNT;
-}
-
-bool IsTreeLeaf(const Tree *tree) {
-    return tree->childCount == 0;
 }
 
 void AddChild(Tree *tree, Tree *child) {
@@ -31,10 +24,6 @@ Tree *GetChild(const Tree *tree, int index) {
     }
 
     return tree->children[index];
-}
-
-int GetData(const Tree *tree) {
-    return tree->data;
 }
 
 int GetChildCount(const Tree *tree) {

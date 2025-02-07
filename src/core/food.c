@@ -2,28 +2,12 @@
 #include <string.h>
 
 /** Food Type */
-void ResetFoodType(FoodType *food, int id, const char *name, char action, Time expiredTime, Duration deliveryDuration) {
-    food->id = id;
-    strcpy(food->name, name);
-    food->actionType = action;
-    food->timeToExpire = expiredTime;
-    food->timeToDeliver = deliveryDuration;
-}
-
-int GetFoodId(const FoodType *food) {
-    return food->id;
-}
-
-const char *GetFoodName(const FoodType *food) {
-    return food->name;
-}
-
-Time GetFoodTimeToExpire(const FoodType *food) {
-    return food->timeToExpire;
-}
-
-Duration GetFoorTimeToDeliver(const FoodType *food) {
-    return food->timeToDeliver;
+void ResetFoodType(FoodType *foodType, int id, const char *name, char action, Duration timeToExpire, Duration timeToDeliver) {
+    foodType->id = id;
+    strcpy(foodType->name, name);
+    foodType->actionType = action;
+    foodType->timeToExpire = timeToExpire;
+    foodType->timeToDeliver = timeToDeliver;
 }
 
 /** Food Instance */

@@ -9,14 +9,6 @@ void ResetDeliveryQueue(DeliveryQueue *deliveryQueue) {
     deliveryQueue->count = 0;
 }
 
-bool IsDeliveryQueueEmpty(const DeliveryQueue *deliveryQueue) {
-    return deliveryQueue->count == 0;
-}
-
-int GetDeliveryQueueCount(const DeliveryQueue *deliveryQueue) {
-    return deliveryQueue->count;
-}
-
 int GetIndexOfDeliveryQueue(const DeliveryQueue *deliveryQueue, Food food) {
     DeliveryQueueEntry *current = deliveryQueue->head;
     int index = 0;

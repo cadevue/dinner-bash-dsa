@@ -91,16 +91,16 @@ void LoadFoodTypes(StaticList *foodTypes, const char *path) {
     }
 }
 
-Tree *FindOrCreateNode(StaticList *recipes, int foodId) {
+Tree *FindOrCreateNode(StaticList *recipes, FoodType* type) {
     for (int i = 0; i < GetStaticListCount(recipes); i++) {
         Tree *node = (Tree *) (GetStaticListElement(recipes, i)->recipe);
-        if (node->data == foodId) {
+        if (node->data == type) {
             return node;
         }
     }
 
     Tree *newNode = (Tree *)malloc(sizeof(Tree));
-    newNode->data = foodId;
+    newNode->data = type;
     newNode->childCount = 0;
 
     StaticListElement elmt = { .recipe = newNode };
@@ -108,7 +108,7 @@ Tree *FindOrCreateNode(StaticList *recipes, int foodId) {
     return newNode;
 }
 
-void LoadRecipes(StaticList *recipes, const char *path) {
+void LoadRecipes(StaticList *recipes, StaticList *foodTypes, char *path) {
     FILE *file = fopen(path, "r");
     if (file == NULL) {
         printf("Failed to open file: %s\n", path);
@@ -132,9 +132,10 @@ void LoadRecipes(StaticList *recipes, const char *path) {
             if (sscanf(line, "%d %d", &parentId, &childCount) < 2) {
                 LogParseError(file, line, "Invalid recipe format");
                 return;
-            }
+            }            
 
-            Tree *parentNode = FindOrCreateNode(recipes, parentId);
+            FoodType *parentType = FindFoodTypeById(foodTypes, parentId);
+            Tree *parentNode = FindOrCreateNode(recipes, parentType);
 
             // Traverse each token
             char *token = strtok(line, " ");
@@ -144,7 +145,8 @@ void LoadRecipes(StaticList *recipes, const char *path) {
             // Add children
             while (token != NULL && childCount > 0) {
                 int childId = atoi(token);
-                Tree *childNode = FindOrCreateNode(recipes, childId);
+                FoodType *childType = FindFoodTypeById(foodTypes, childId);
+                Tree *childNode = FindOrCreateNode(recipes, childType);
                 AddChild(parentNode, childNode);
                 token = strtok(NULL, " ");
                 childCount--;

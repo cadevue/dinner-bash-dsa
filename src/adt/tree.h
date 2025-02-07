@@ -1,24 +1,18 @@
 #pragma once
 
 #include "../core/boolean.h"
+#include "../core/food.h"
 
 #define MAX_TREE_CHILD_COUNT 5
 
 typedef struct Tree
 {
-    int data;
+    FoodType *data;
     int childCount;
     struct Tree *children[MAX_TREE_CHILD_COUNT];
 } Tree;
 
-void ResetTree(Tree *tree);
-
-bool IsTreeEmpty(const Tree *tree);
-bool IsTreeChildrenFull(const Tree *tree);
-bool IsTreeLeaf(const Tree *tree);
-
+void ResetTree(Tree *tree, FoodType *data);
 void AddChild(Tree *tree, Tree *child);
-
-Tree *GetChild(const Tree *tree, int index);
-int GetData(const Tree *tree);
+Tree* GetChild(const Tree *tree, int index);
 int GetChildCount(const Tree *tree);

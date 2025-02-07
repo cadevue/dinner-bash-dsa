@@ -143,14 +143,14 @@ void FormatCookbookItem(Tree *recipe, StaticList *foodDirectory) {
     char buffer[BOX_WIDTH * 2];
 
     // Name
-    FoodType *foodType = FindFoodTypeById(foodDirectory, recipe->data);
+    FoodType *foodType = recipe->data;
     int nameLen = strlen(foodType->name);
     snprintf(nameLine, BOX_WIDTH * 2, "| \033[1;33m%s\033[0m%-*s |", foodType->name, BOX_WIDTH - nameLen - 1, "");
 
     // Ingredients
     char *ingredientLine = ingredientLines;
     for (int i = 0; i < recipe->childCount; i++) {
-        FoodType *ingredient = FindFoodTypeById(foodDirectory, GetChild(recipe, i)->data);
+        FoodType *ingredient = GetChild(recipe, i)->data;
         strcpy(buffer, ingredient->name);
         int bufferLen = strlen(buffer);
         snprintf(ingredientLine, BOX_WIDTH * 2, "|     - %s%-*s |", buffer, BOX_WIDTH - bufferLen - 7, "");

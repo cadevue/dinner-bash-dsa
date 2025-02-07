@@ -5,7 +5,6 @@
 #include "../core/time.h"
 #include "../core/delivery.h"
 #include "../adt/matrix.h"
-#include "../adt/stack.h"
 #include "../adt/static_list.h"
 
 typedef struct {
@@ -19,9 +18,6 @@ typedef struct {
     StaticList foodDirectory;
     StaticList recipes;
     DeliveryQueue deliveryQueue;
-    
-    // Utilities
-    Stack actions;
 } Application;
 
 void RegisterUser(char *name);

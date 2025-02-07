@@ -12,14 +12,6 @@ void ResetMatrix(Matrix *mat, int rowEff, int colEff) {
     }
 }
 
-int GetMatrixRowEff(const Matrix *mat) {
-    return mat->rowEff;
-}
-
-int GetMatrixColEff(const Matrix *mat) {
-    return mat->colEff;
-}
-
 void SetMatrixElement(Matrix *mat, int row, int col, char element) {
     mat->mat[row][col] = element;
 }
