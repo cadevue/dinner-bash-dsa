@@ -15,3 +15,7 @@
 #define ACTION_OBSTACLE 11
 
 #define ACTION_SIM_POS  99
+
+char GetSymbolForAction(char action);
+void GetActionName(char action, char *buffer);
+char NameToAction(const char *buffer);

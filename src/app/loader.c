@@ -33,7 +33,10 @@ void LoadFoodTypes(StaticList *foodTypes, const char *path) {
         // Read ID
         int id;
         if (fgets(line, sizeof(line), file) != NULL) {
-            id = atoi(line);
+            if (sscanf(line, "%d", &id) != 1) {
+                LogParseError(file, line, "Food ID not found or invalid");
+                return;
+            }
         } else {
             LogParseError(file, line, "Food ID not found or invalid");
             return;
@@ -75,7 +78,8 @@ void LoadFoodTypes(StaticList *foodTypes, const char *path) {
         // Read Action
         char action;
         if (fgets(line, sizeof(line), file) != NULL) {
-            action = line[0];
+            char *token = strtok(line, " \t\n");
+            action = NameToAction(token);
         } else {
             LogParseError(file, line, "Action not found or invalid");
             return;

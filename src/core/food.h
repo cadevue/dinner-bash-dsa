@@ -22,7 +22,6 @@ Duration GetFoorTimeToDeliver(const FoodType *FoodType);
 typedef struct { 
     FoodType* type;
     Time expiredTime;
-    Time deliveredTime;
 } Food;
 
 void ResetFood(Food *food, FoodType *type, Time currentTime);

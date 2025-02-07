@@ -2,6 +2,7 @@
 #include "screen.h"
 #include "loader.h"
 #include "strconst.h"
+#include "../core/action.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -78,7 +79,7 @@ void InitApplication(Application *app) {
 
 /** Command Implementor */
 bool MoveSimulator(Application *app, int x, int y, char *reason) {
-    char action = GetActionAtLocation(&app->map, x, y);
+    char action = GetElementAtLocation(&app->map, x, y);
 
     if (action == ACTION_OBSTACLE || action == ACTION_INVALID) {
         sprintf(reason, "You can't move there, there's a wall");
@@ -99,6 +100,18 @@ bool MoveSimulator(Application *app, int x, int y, char *reason) {
     return false;
 }
 
+bool IsAdjacentToActionTile(const Application *app, char action) {
+    int x = GetX(&app->sim.position);
+    int y = GetY(&app->sim.position);
+
+    if (GetElementAtLocation(&app->map, x - 1, y) == action) return true;
+    if (GetElementAtLocation(&app->map, x + 1, y) == action) return true;
+    if (GetElementAtLocation(&app->map, x, y - 1) == action) return true;
+    if (GetElementAtLocation(&app->map, x, y + 1) == action) return true;
+
+    return false;
+}
+
 /** Command Processor */
 static char command[50];
 static bool shouldNextLoop = true;
@@ -109,6 +122,7 @@ void GetCommand(char *command) {
     fgets(command, 50, stdin);
     command[strlen(command) - 1] = '\0';
 }
+
 
 bool ProcessCommand(Application *app, char *command) {
     /** Exit */
@@ -183,55 +197,91 @@ bool ProcessCommand(Application *app, char *command) {
 
     /** Inventory */
     } else if (STR_EQ(command, "inventory")) {
-        PrintAppState(app);
+        ClearAndPrintHeader();
         PrintInventory(app);
         return false;
 
     /** Catalog */
     } else if (STR_EQ(command, "catalog")) {
-        PrintAppState(app);
+        ClearAndPrintHeader();
         PrintCatalogMenu(app);
         return false;
 
     /** Recipe */
     } else if (STR_EQ(command, "cookbook")) {
-        PrintAppState(app);
+        ClearAndPrintHeader();
         PrintCookbookMenu(app);
         return false;
 
     /** Delivery */
     } else if (STR_EQ(command, "delivery")) {
-        PrintAppState(app);
+        ClearAndPrintHeader();
         PrintDeliveryMenu(app);
         return false;
 
     /** Buy */
     } else if (STR_EQ(command, "buy")) {
-        PrintBuyMenu(app);
+        if (!IsAdjacentToActionTile(app, ACTION_BUY)) {
+            PrintAppState(app);
+            printf("\nYou are not adjacent to telephone tile (T)\n");
+            return false;
+        } else {
+            ClearAndPrintHeader();
+            PrintBuyMenu(app);
+        }
+
         return false;
 
     /** Mix */
     } else if (STR_EQ(command, "mix")) {
-        PrintAppState(app);
-        PrintMixMenu(app);
+        if (!IsAdjacentToActionTile(app, ACTION_MIX)) {
+            PrintAppState(app);
+            printf("\nYou are not adjacent to mixer tile (M)\n");
+            return false;
+        } else {
+            ClearAndPrintHeader();
+            PrintMixMenu(app);
+        }
+
         return false;
 
     /** Chop */
     } else if (STR_EQ(command, "chop")) {
-        PrintAppState(app);
-        PrintChopMenu(app);
+        if (!IsAdjacentToActionTile(app, ACTION_CHOP)) {
+            PrintAppState(app);
+            printf("\nYou are not adjacent to chopping tile (C)\n");
+            return false;
+        } else {
+            ClearAndPrintHeader();
+            PrintChopMenu(app);
+        }
+
         return false;
 
     /** Fry */
     } else if (STR_EQ(command, "fry")) {
-        PrintAppState(app);
-        PrintFryMenu(app);
+        if (!IsAdjacentToActionTile(app, ACTION_FRY)) {
+            PrintAppState(app);
+            printf("\nYou are not adjacent to frying tile (F)\n");
+            return false;
+        } else {
+            ClearAndPrintHeader();
+            PrintFryMenu(app);
+        }
+        
         return false;
 
     /** Boil */
     } else if (STR_EQ(command, "boil")) {
-        PrintAppState(app);
-        PrintBoilMenu(app);
+        if (!IsAdjacentToActionTile(app, ACTION_BOIL)) {
+            PrintAppState(app);
+            printf("\nYou are not adjacent to boiling tile (B)\n");
+            return false;
+        } else {
+            ClearAndPrintHeader();
+            PrintBoilMenu(app);
+        }
+
         return false;
 
     /** Unknown command */

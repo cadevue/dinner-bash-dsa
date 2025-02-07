@@ -13,7 +13,7 @@ void PrintProgressBar(int progress, int total);
 void PrintMap(const Application *app);
 
 void PrintInventory(const Application *app);
-void PrintCatalogMenu(const Application *app);
+void PrintCatalogMenu(Application *app);
 void PrintCookbookMenu(const Application *app);
 void PrintDeliveryMenu(const Application *app);
 

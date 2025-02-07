@@ -2,6 +2,7 @@
 #include "boolean.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 void ResetTime(Time *t, int day, int hour, int minute) {
     t->day = day;
@@ -60,4 +61,34 @@ bool IsEqOrLater(const Time *t1, const Time *t2) {
 
 void PrintTime(const Time *t) {
     printf("Day %d, %02d:%02d\n", t->day, t->hour, t->minute);
+}
+
+void DurationToString(const Duration *duration, char *dest) {
+    memset(dest, 0, sizeof(dest));
+    if (duration->day > 0) {
+        sprintf(dest, "%d day%s", duration->day, (duration->day > 1) ? "s" : "");
+    }
+
+    if (duration->hour > 0) {
+        if (strlen(dest) > 0) {
+            strcat(dest, ", ");
+        }
+        char hourStr[32];
+        sprintf(hourStr, "%d hour%s", duration->hour, (duration->hour > 1) ? "s" : "");
+        strcat(dest, hourStr);
+    }
+
+    if (duration->minute > 0) {
+        if (strlen(dest) > 0) {
+            strcat(dest, ", ");
+        }
+        char minuteStr[32];
+        sprintf(minuteStr, "%d minute%s", duration->minute, (duration->minute > 1) ? "s" : "");
+        strcat(dest, minuteStr);
+    }
+
+    // If all fields are zero, set the output to "Immediate"
+    if (strlen(dest) == 0) {
+        strcpy(dest, "Immediate");
+    }
 }

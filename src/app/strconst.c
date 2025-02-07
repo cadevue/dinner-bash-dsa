@@ -108,3 +108,21 @@ const char * LEGEND=
 "| type 'back' to return to the game.                    |\n"
 "<------------------------------------------------------->\n\n"
 ;
+
+const char * INVENTORY_TEMPLATE =
+">---------------------------------<\n"
+"| <01>                            |\n"
+"| <Kacang Goreng>                 |\n"
+"| Expired in <15 minutes>         |\n"
+"<--------------------------------->\n"
+;
+
+const char * CATALOG_TEMPLATE =
+">-------------------------------------<\n"
+"| <name>                              |\n"
+"| Time to Expire: <time.string>       |\n"
+"| Time to Deliver: <time.string>      |\n"
+"|                                     |\n"
+"| To Acquire: <string>                |\n"
+"<------------------------------------->\n"
+;

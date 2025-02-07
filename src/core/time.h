@@ -25,3 +25,4 @@ void AddDuration(Time *t, Duration *duration);
 bool IsEqOrLater(const Time *t1, const Time *t2);
 
 void PrintTime(const Time *t);
+void DurationToString(const Duration *duration, char *buffer);
