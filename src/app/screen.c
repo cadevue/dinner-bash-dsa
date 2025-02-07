@@ -89,7 +89,10 @@ void PrintMap(const Application *app) {
 #define BUY_HEADER         "|=================== \033[1mTELEPHONE\033[0m ===================|"
 #define DELIVERY_HEADER    "|================= \033[1mDELIVERY QUEUE\033[0m ================|"
 #define INVENTORY_HEADER   "|=================== \033[1mINVENTORY\033[0m ===================|"
-
+#define MIX_HEADER         "|==================== \033[1mMIX MENU\033[0m ===================|"
+#define CHOP_HEADER        "|=================== \033[1mCHOP MENU\033[0m ===================|"
+#define FRY_HEADER         "|==================== \033[1mFRY MENU\033[0m ===================|"
+#define BOIL_HEADER        "|=================== \033[1mBOIL MENU\033[0m ===================|"
 
 void FormatCatalogItem(const FoodType* foodType) {
     char nameLine[BOX_WIDTH * 2] ;
@@ -136,7 +139,7 @@ void PrintCatalog(Application *app) {
     printf("\ntype 'back' to return to the map\n");
 }
 
-void FormatCookbookItem(Tree *recipe, StaticList *foodDirectory) {
+void FormatCookbookItem(Tree *recipe) {
     char nameLine[BOX_WIDTH * 2];
     char ingredientLines[BOX_WIDTH * 2 * MAX_TREE_CHILD_COUNT];
     char actionLine[BOX_WIDTH * 2];
@@ -180,7 +183,7 @@ void PrintCookbook(Application *app) {
     for (int i = 0; i < app->recipes.count; i++) {
         Tree *recipe = (Tree *)GetStaticListElement(&app->recipes, i)->recipe;
         if (recipe->childCount != 0) {
-            FormatCookbookItem(recipe, &app->foodDirectory);
+            FormatCookbookItem(recipe);
         }
     }
     printf("\ntype 'back' to return to the map\n");
@@ -275,18 +278,100 @@ void PrintBuyMenu(Application *app) {
     printf("\ntype 'back' to return to the map\n");
 }
 
+void FormatRecipeRoot(Tree *recipe) {
+    char nameLine[BOX_WIDTH * 2];
+    char ingredientLines[BOX_WIDTH * 2 * MAX_TREE_CHILD_COUNT];
+    char buffer[BOX_WIDTH * 2];
+
+    // Name
+    FoodType *foodType = recipe->data;
+    int nameLen = strlen(foodType->name);
+    snprintf(nameLine, BOX_WIDTH * 2, "| \033[1;33m%s\033[0m%-*s |", foodType->name, BOX_WIDTH - nameLen - 1, "");
+
+    // Ingredients
+    char *ingredientLine = ingredientLines;
+    for (int i = 0; i < recipe->childCount; i++) {
+        FoodType *ingredient = GetChild(recipe, i)->data;
+        strcpy(buffer, ingredient->name);
+        int bufferLen = strlen(buffer);
+        snprintf(ingredientLine, BOX_WIDTH * 2, "|     - %s%-*s |", buffer, BOX_WIDTH - bufferLen - 7, "");
+        ingredientLine += BOX_WIDTH * 2;
+    }
+
+
+    printf("%s\n", BOX_TOP);
+    printf("%s\n", nameLine);
+    printf("| Ingredients:                                    |\n");
+    for (int i = 0; i < recipe->childCount; i++) {
+        printf("%s\n", ingredientLines + i * BOX_WIDTH * 2);
+    }
+    printf("%s\n", BOX_BOTTOM);
+}
+
 void PrintMixMenu(Application *app) {
-    printf("\nMix: Not Implemented\n");
+    printf("%s\n", BOX_TOP);
+    printf("%s\n", MIX_HEADER);
+    Tree* recipes[STATIC_LIST_CAPACITY];
+    int count = FindRecipesByAction(&app->recipes, ACTION_MIX, recipes);
+    if (count == 0) {
+        printf("| \033[1;33mNo recipe available for mixing\033[0m%-*s |\n", BOX_WIDTH - 31, "");
+        printf("%s\n", BOX_BOTTOM);
+        return;
+    }
+    for (int i = 0; i < count; i++) {
+        FormatRecipeRoot(recipes[i]);
+    }
+    printf("\ntype 'back' to return to the map\n");
 }
 
 void PrintChopMenu(Application *app) {
-    printf("\nChop: Not Implemented\n");
+    printf("%s\n", BOX_TOP);
+    printf("%s\n", CHOP_HEADER);
+    Tree* recipes[STATIC_LIST_CAPACITY];
+    int count = FindRecipesByAction(&app->recipes, ACTION_CHOP, recipes);
+    if (count == 0) {
+        printf("| \033[1;33mNo recipe available for chopping\033[0m%-*s |\n", BOX_WIDTH - 33, "");
+        printf("%s\n", BOX_BOTTOM);
+        printf("\ntype 'back' to return to the map\n");
+        return;
+    }
+
+    for (int i = 0; i < count; i++) {
+        FormatRecipeRoot(recipes[i]);
+    }
+    printf("\ntype 'back' to return to the map\n");
 }
 
 void PrintFryMenu(Application *app) {
-    printf("\nFry: Not Implemented\n");
+    printf("%s\n", BOX_TOP);
+    printf("%s\n", FRY_HEADER);
+    Tree* recipes[STATIC_LIST_CAPACITY];
+    int count = FindRecipesByAction(&app->recipes, ACTION_FRY, recipes);
+    if (count == 0) {
+        printf("| \033[1;33mNo recipe available for frying\033[0m%-*s |\n", BOX_WIDTH - 31, "");
+        printf("%s\n", BOX_BOTTOM);
+        printf("\ntype 'back' to return to the map\n");
+        return;
+    }
+    for (int i = 0; i < count; i++) {
+        FormatRecipeRoot(recipes[i]);
+    }
+    printf("\ntype 'back' to return to the map\n");
 }
 
 void PrintBoilMenu(Application *app) {
-    printf("\nBoil: Not Implemented\n");
+    printf("%s\n", BOX_TOP);
+    printf("%s\n", BOIL_HEADER);
+    Tree* recipes[STATIC_LIST_CAPACITY];
+    int count = FindRecipesByAction(&app->recipes, ACTION_BOIL, recipes);
+    if (count == 0) {
+        printf("| \033[1;33mNo recipe available for boiling\033[0m%-*s |\n", BOX_WIDTH - 32, "");
+        printf("%s\n", BOX_BOTTOM);
+        printf("\ntype 'back' to return to the map\n");
+        return;
+    }
+    for (int i = 0; i < count; i++) {
+        FormatRecipeRoot(recipes[i]);
+    }
+    printf("\ntype 'back' to return to the map\n");
 }

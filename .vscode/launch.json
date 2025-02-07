@@ -9,7 +9,7 @@
             "args": [],
             "stopAtEntry": false,
             // "cwd": "${workspaceFolder}/build/bin",
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/build/bin",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
