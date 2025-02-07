@@ -19,7 +19,7 @@ bool IsStaticListEmpty(const StaticList *list) {
     return list->count == 0;
 }
 
-char GetIndexOfStaticList(const StaticList *list, StaticListElement element) {
+int GetIndexOfStaticList(const StaticList *list, StaticListElement element) {
     for (int i = 0; i < list->count; i++) {
         if (SL_ELMT_EQUAL(list->data[i], element)) {
             return i;
@@ -36,6 +36,17 @@ StaticListElement* GetStaticListElement(StaticList *list, int index)
     }
 
     return &list->data[index];
+}
+
+
+FoodType* FindFoodTypeById(StaticList *list, int id) {
+    for (int i = 0; i < list->count; i++) {
+        if (list->data[i].foodType.id == id) {
+            return &list->data[i].foodType;
+        }
+    }
+
+    return NULL;
 }
 
 void InsertFirstStaticList(StaticList *list, StaticListElement element) {

@@ -12,10 +12,10 @@ void PrintProgressBar(int progress, int total);
 // Dynamic
 void PrintMap(const Application *app);
 
-void PrintInventory(const Application *app);
+void PrintInventory(Application *app);
 void PrintCatalogMenu(Application *app);
-void PrintCookbookMenu(const Application *app);
-void PrintDeliveryMenu(const Application *app);
+void PrintCookbookMenu(Application *app);
+void PrintDeliveryMenu(Application *app);
 
 void PrintBuyMenu(const Application *app);
 void PrintMixMenu(const Application *app);

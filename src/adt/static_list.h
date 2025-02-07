@@ -29,8 +29,10 @@ char GetStaticListCount(const StaticList *list);
 bool IsStaticListFull(const StaticList *list);
 bool IsStaticListEmpty(const StaticList *list);
 
-char GetIndexOfStaticList(const StaticList *list, StaticListElement element);
+int GetIndexOfStaticList(const StaticList *list, StaticListElement element);
 StaticListElement* GetStaticListElement(StaticList *list, int index);
+
+FoodType* FindFoodTypeById(StaticList *list, int id);
 
 void InsertFirstStaticList(StaticList *list, StaticListElement element);
 void InsertLastStaticList(StaticList *list, StaticListElement element);

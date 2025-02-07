@@ -53,7 +53,7 @@ const char * HELP_COMMANDS=
 "|=======================COMMANDS========================|\n"
 "| All the commands are case-insensitive.                |\n"
 "|                                                       |\n"
-"| \033[1mGeneral\033[0m:                                              |\n"
+"| \033[1mBasic Commands\033[0m:                                       |\n"
 "|   - help     : Display all available commands.        |\n"
 "|   - exit     : Exit the game.                         |\n"
 "|   - wait h m : Wait for h hours and m minutes.        |\n"
@@ -113,16 +113,16 @@ const char * INVENTORY_TEMPLATE =
 ">---------------------------------<\n"
 "| <01>                            |\n"
 "| <Kacang Goreng>                 |\n"
-"| Expired in <15 minutes>         |\n"
+"| Expired at Day <d> hh:mm        |\n"
 "<--------------------------------->\n"
 ;
 
-const char * CATALOG_TEMPLATE =
+const char * RECIPE_TEMPLATE =
 ">-------------------------------------<\n"
 "| <name>                              |\n"
-"| Time to Expire: <time.string>       |\n"
-"| Time to Deliver: <time.string>      |\n"
-"|                                     |\n"
-"| To Acquire: <string>                |\n"
+"| Ingredients:                        |\n"
+"|     - <ing.1>                       |\n"
+"|     - <ing.2>                       |\n"
+"|     - <ing.3>                       |\n"
 "<------------------------------------->\n"
 ;
