@@ -2,8 +2,6 @@
 #include <stdlib.h>
 
 void ResetDeliveryQueue(DeliveryQueue *deliveryQueue) {
-    FreeDeliveryQueue(deliveryQueue);
-
     deliveryQueue->head = nullptr;
     deliveryQueue->count = 0;
 }
@@ -88,4 +86,6 @@ void FreeDeliveryQueue(DeliveryQueue *deliveryQueue) {
         free(current);
         current = next;
     }
+
+    ResetDeliveryQueue(deliveryQueue);
 }

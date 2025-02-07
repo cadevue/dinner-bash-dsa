@@ -12,7 +12,7 @@ if not exist %BUILD_DIR% mkdir %BUILD_DIR%
 
 :: Navigate to build directory and generate CMake files
 cd %BUILD_DIR%
-cmake -G %GENERATOR% ..
+cmake -DCMAKE_BUILD_TYPE=Debug -G %GENERATOR% ..
 
 :: Build the project
 if %errorlevel% neq 0 (

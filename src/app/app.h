@@ -3,7 +3,6 @@
 #include "../core/boolean.h"
 #include "../core/simulator.h"
 #include "../core/time.h"
-#include "../core/log.h"
 #include "../core/delivery.h"
 #include "../adt/matrix.h"
 #include "../adt/stack.h"
@@ -23,7 +22,6 @@ typedef struct {
     
     // Utilities
     Stack actions;
-    Log log;
 } Application;
 
 void RegisterUser(char *name);

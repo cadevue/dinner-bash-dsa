@@ -2,8 +2,6 @@
 #include <stdlib.h>
 
 void ResetInventory(Inventory *inventory) {
-    FreeInventory(inventory);
-
     inventory->head = nullptr;
     inventory->count = 0;
 }
@@ -117,4 +115,6 @@ void FreeInventory(Inventory *inventory) {
         free(current);
         current = next;
     }
+
+    ResetInventory(inventory);
 }
