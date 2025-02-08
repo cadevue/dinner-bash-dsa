@@ -2,6 +2,7 @@
 #include "screen.h"
 #include "loader.h"
 #include "strconst.h"
+#include "history.h"
 #include "../core/log.h"
 #include "../core/action.h"
 
@@ -91,8 +92,15 @@ void UpdateApp(Application *app) {
     UpdateInventory(&app->sim.inventory, &app->currentTime);
 }
 
+void GetCommand(char *command) {
+    printf("\nUse Command 'help' to see available commands!\n");
+    printf("Enter command: ");
+    fgets(command, MAX_COMMAND_LEN, stdin);
+    command[strlen(command) - 1] = '\0';
+}
+
 /** Command Implementor */
-bool MoveSimulator(Application *app, int x, int y, char *reason) {
+bool TryMoveSimulator(Application *app, int x, int y, char *reason) {
     char action = GetElementAtLocation(&app->map, x, y);
 
     if (action == ACTION_OBSTACLE || action == ACTION_INVALID) {
@@ -126,7 +134,114 @@ bool IsAdjacentToActionTile(const Application *app, char action) {
     return false;
 }
 
-void PrintActionMenu(Application *app, char action) {
+bool ProcessMove(Application *app, char *command) {
+    int x = GetX(&app->sim.position);
+    int y = GetY(&app->sim.position);
+    char reason[MAX_LOG_MESSAGE_LENGTH];
+    char direction[10];
+    char action = ACTION_INVALID;
+
+    bool success = false;
+
+    if (STR_EQ(command, "up") || STR_EQ(command, "u")) {
+        success = TryMoveSimulator(app, x - 1, y, reason);
+        strcpy(direction, "up");
+        action = ACTION_MOVE_U;
+    } else if (STR_EQ(command, "down") || STR_EQ(command, "d")) {
+        success = TryMoveSimulator(app, x + 1, y, reason);
+        strcpy(direction, "down");
+        action = ACTION_MOVE_D;
+    } else if (STR_EQ(command, "left") || STR_EQ(command, "l")) {
+        success = TryMoveSimulator(app, x, y - 1, reason);
+        strcpy(direction, "left");
+        action = ACTION_MOVE_L;
+    } else if (STR_EQ(command, "right") || STR_EQ(command, "r")) {
+        success = TryMoveSimulator(app, x, y + 1, reason);
+        strcpy(direction, "right");
+        action = ACTION_MOVE_R;
+    }
+
+    if (!success) {
+        sprintf(message, "Failed to move %s: %s", direction, reason);
+        AddLogMessage(message);
+        PrintAppState(app);
+    } else {
+        sprintf(message, "Player moved %s to (%d, %d)", direction, GetX(&app->sim.position), GetY(&app->sim.position));
+        AddLogMessage(message);
+        
+        StackElement element = {action, x, y};
+        StackPush(&app->undoStack, element);
+        ClearStack(&app->redoStack);
+    }
+
+    return success;
+}
+
+bool ProcessWait(Application *app, char *command) {
+    int h, m;
+    int result = sscanf(command + 5, "%d %d", &h, &m);
+    if (result != 2) {
+        PrintAppState(app);
+        printf("\nInvalid wait parameters: %s\n", command + 5);
+        return false;
+    }
+
+    if (h < 0 || m < 0) {
+        PrintAppState(app);
+        printf("\nInvalid wait parameters: %d %d\n", h, m);
+        return false;
+    }
+
+    AddHour(&app->currentTime, h);
+    AddMinute(&app->currentTime, m-1); // -1 because the loop will increment the time by 1 minute
+
+    sprintf(message, "Player waited for %d hours and %d minutes", h, m);
+    AddLogMessage(message);
+    StackPush(&app->undoStack, (StackElement) {ACTION_WAIT, h, m});
+    ClearStack(&app->redoStack);
+    return true;
+}
+
+bool ProcessBuy(Application *app) {
+    ClearAndPrintHeader();
+    PrintBuyMenu(app);
+
+    char internalCommand[MAX_COMMAND_LEN];
+    bool success = false;
+
+    while (!success) {
+        GetCommand(internalCommand);
+
+        int inputNum;
+        FoodType* types[STATIC_LIST_CAPACITY];
+        int count = FindFoodTypesByAction(&app->foodDirectory, ACTION_BUY, types);
+
+        if (sscanf(internalCommand, "%d", &inputNum) == 1) {
+            if (inputNum > 0 && inputNum <= count) {
+                FoodType* type = types[inputNum - 1];
+                InsertDeliveryQueue(&app->deliveryQueue, type, &app->currentTime);
+                
+                StackPush(&app->undoStack, (StackElement) {ACTION_BUY, type->id, 0});
+                ClearStack(&app->redoStack);
+                return true;
+            } else {
+                ClearAndPrintHeader();
+                PrintBuyMenu(app);
+                printf("\nInvalid index: %d, Choose between 1-%d\n", inputNum, count);
+            }
+        } else if (STR_EQ(internalCommand, "back")) {
+            PrintAppState(app);
+            return false;
+        } else {
+            ClearAndPrintHeader();
+            PrintBuyMenu(app);
+            printf("\nInvalid menu command: %s\nType 'back' to return to the map\n", internalCommand);
+        }
+    }
+}
+
+
+void PrintRecipeActionMenu(Application *app, char action) {
     switch (action) {
         case ACTION_MIX: PrintMixMenu(app); break;
         case ACTION_CHOP: PrintChopMenu(app); break;
@@ -136,16 +251,9 @@ void PrintActionMenu(Application *app, char action) {
     }
 }
 
-void GetCommand(char *command) {
-    printf("\nUse Command 'help' to see available commands!\n");
-    printf("Enter command: ");
-    fgets(command, MAX_COMMAND_LEN, stdin);
-    command[strlen(command) - 1] = '\0';
-}
-
 bool ExecuteRecipeAction(Application* app, char action) {
     ClearAndPrintHeader();
-    PrintActionMenu(app, action);
+    PrintRecipeActionMenu(app, action);
 
     char internalCommand[MAX_COMMAND_LEN];
     bool success = false;
@@ -161,10 +269,16 @@ bool ExecuteRecipeAction(Application* app, char action) {
             if (inputNum > 0 && inputNum <= count) {
                 Tree* recipe = recipes[inputNum - 1];
 
-                return DoRecipe(&app->sim.inventory, recipe, &app->currentTime, &app->undoStack);
+                bool success = DoRecipe(&app->sim.inventory, recipe, &app->currentTime, &app->undoStack);
+                if (success) {
+                    ClearStack(&app->redoStack);
+                } else {
+                    PrintAppState(app);
+                }
+                return success;
             } else {
                 ClearAndPrintHeader();
-                PrintActionMenu(app, action);
+                PrintRecipeActionMenu(app, action);
                 printf("\nInvalid index: %d, Choose between 1-%d\n", inputNum, count);
             }
         } else if (STR_EQ(internalCommand, "back")) {
@@ -172,157 +286,14 @@ bool ExecuteRecipeAction(Application* app, char action) {
             return false;
         } else {
             ClearAndPrintHeader();
-            PrintActionMenu(app, action);
+            PrintRecipeActionMenu(app, action);
             printf("\nInvalid menu command: %s\nType 'back' to return to the map\n", internalCommand);
         }
     }
 }
 
-void UndoRecipeAction(Application *app, char action, StackElement element) {
-    Tree* recipe = FindRecipeById(&app->recipes, element.param1);
-    RevertRecipe(&app->sim.inventory, recipe, &app->currentTime, &app->undoStack, &app->redoStack);
-}
-
-void RedoRecipeAction(Application *app, char action, StackElement element) {
-    Tree* recipe = FindRecipeById(&app->recipes, element.param1);
-    DoRecipe(&app->sim.inventory, recipe, &app->currentTime, &app->undoStack);
-}
-
-void ProcessUndo(Application* app) {
-    if (IsStackEmpty(&app->undoStack)) {
-        AddLogMessage("Nothing to undo! Undo stack is empty");
-        PrintAppState(app);
-        return;
-    }
-
-    char message[MAX_LOG_MESSAGE_LENGTH];
-    StackElement element = StackPop(&app->undoStack);
-    char action = element.action;
-    int param1 = element.param1;
-    int param2 = element.param2;
-
-    switch (action) {
-        case ACTION_MOVE_U:
-        case ACTION_MOVE_R:
-        case ACTION_MOVE_D:
-        case ACTION_MOVE_L:
-            char direction[10];
-            element.param1 = GetX(&app->sim.position);
-            element.param2 = GetY(&app->sim.position);
-            SetSimulatorPosition(&app->sim, param1, param2);
-
-            if (action == ACTION_MOVE_U) strcpy(direction, "up");
-            if (action == ACTION_MOVE_R) strcpy(direction, "right");
-            if (action == ACTION_MOVE_D) strcpy(direction, "down");
-            if (action == ACTION_MOVE_L) strcpy(direction, "left");
-
-            sprintf(message, "Undo move %s! Player moved back to (%d, %d)", direction, param1, param2);
-            AddLogMessage(message);
-
-            StackPush(&app->redoStack, element);
-            break;
-
-        case ACTION_WAIT:
-            AddHour(&app->currentTime, -param1);
-            AddMinute(&app->currentTime, -param2);
-
-            char timeStr[32];
-            TimeToString(&app->currentTime, timeStr);
-            sprintf(message, "Undo wait! Time reverted back to %s", timeStr);
-            AddLogMessage(message);
-
-            AddMinute(&app->currentTime, 1); // Cancel out the -1 minute from the undo action
-            break;
-
-        case ACTION_MIX:
-        case ACTION_CHOP:
-        case ACTION_FRY:
-        case ACTION_BOIL:
-            UndoRecipeAction(app, action, element);
-            break;
-
-        case ACTION_BUY:
-            FoodType* type = FindFoodTypeById(&app->foodDirectory, param1);
-            RemoveLatestDeliveryQueue(&app->deliveryQueue, type);
-
-            sprintf(message, "Undo buy! Order of %s has been cancelled", type->name);
-            AddLogMessage(message);
-
-            StackPush(&app->redoStack, element);
-            break;
-
-        default:
-            break;
-    }
-
-    AddMinute(&app->currentTime, -1); // Undo action takes 1 minute
-    PrintAppState(app);
-}
-
-void ProcessRedo(Application *app) {
-    if (IsStackEmpty(&app->redoStack)) {
-        AddLogMessage("Nothing to redo! Redo stack is empty");
-        PrintAppState(app);
-        return;
-    }
-
-    StackElement element = StackPop(&app->redoStack);
-    char action = element.action;
-    int param1 = element.param1;
-    int param2 = element.param2;
-
-    switch (action) {
-        case ACTION_MOVE_U:
-        case ACTION_MOVE_R:
-        case ACTION_MOVE_D:
-        case ACTION_MOVE_L:
-            char direction[10];
-            element.param1 = GetX(&app->sim.position);
-            element.param2 = GetY(&app->sim.position);
-            SetSimulatorPosition(&app->sim, param1, param2);
-
-            if (action == ACTION_MOVE_U) strcpy(direction, "up");
-            if (action == ACTION_MOVE_R) strcpy(direction, "right");
-            if (action == ACTION_MOVE_D) strcpy(direction, "down");
-            if (action == ACTION_MOVE_L) strcpy(direction, "left");
-
-            sprintf(message, "Redo move %s! Player moved back to (%d, %d)", direction, param1, param2);
-            AddLogMessage(message);
-
-            StackPush(&app->undoStack, element);
-            break;
-
-        case ACTION_WAIT:
-            AddLogMessage("Redo wait hasn't been implemented!");
-            break;
-
-        case ACTION_MIX:
-        case ACTION_CHOP:
-        case ACTION_FRY:
-        case ACTION_BOIL:
-            RedoRecipeAction(app, action, element);
-            break;
-
-        case ACTION_BUY:
-            FoodType* type = FindFoodTypeById(&app->foodDirectory, param1);
-            InsertDeliveryQueue(&app->deliveryQueue, type, &app->currentTime);
-
-            sprintf(message, "Redo buy! Order of %s has been restored", type->name);
-            AddLogMessage(message);
-
-            StackPush(&app->undoStack, element);
-            break;
-
-        default:
-            break;
-    }
-    
-    PrintAppState(app);
-}
-
 /** Command Processor */
 bool ProcessCommand(Application *app, char *command) {
-
     /** Exit */
     if (STR_EQ(command, "exit") || STR_EQ(command, "quit")) {
         app->isRunning = false;
@@ -350,71 +321,11 @@ bool ProcessCommand(Application *app, char *command) {
         STR_EQ(command, "up") || STR_EQ(command, "down") || STR_EQ(command, "left") || STR_EQ(command, "right") ||
         STR_EQ(command, "u") || STR_EQ(command, "d") || STR_EQ(command, "l") || STR_EQ(command, "r")
     ) {
-        int x = GetX(&app->sim.position);
-        int y = GetY(&app->sim.position);
-        char reason[MAX_LOG_MESSAGE_LENGTH];
-        char direction[10];
-        char action = ACTION_INVALID;
-
-        bool success = false;
-
-        if (STR_EQ(command, "up") || STR_EQ(command, "u")) {
-            success = MoveSimulator(app, x - 1, y, reason);
-            strcpy(direction, "up");
-            action = ACTION_MOVE_U;
-        } else if (STR_EQ(command, "down") || STR_EQ(command, "d")) {
-            success = MoveSimulator(app, x + 1, y, reason);
-            strcpy(direction, "down");
-            action = ACTION_MOVE_D;
-        } else if (STR_EQ(command, "left") || STR_EQ(command, "l")) {
-            success = MoveSimulator(app, x, y - 1, reason);
-            strcpy(direction, "left");
-            action = ACTION_MOVE_L;
-        } else if (STR_EQ(command, "right") || STR_EQ(command, "r")) {
-            success = MoveSimulator(app, x, y + 1, reason);
-            strcpy(direction, "right");
-            action = ACTION_MOVE_R;
-        }
-
-        if (!success) {
-            sprintf(message, "Failed to move %s: %s", direction, reason);
-            AddLogMessage(message);
-            PrintAppState(app);
-        } else {
-            sprintf(message, "Player moved %s to (%d, %d)", direction, GetX(&app->sim.position), GetY(&app->sim.position));
-            AddLogMessage(message);
-            
-            StackElement element = {action, x, y};
-            StackPush(&app->undoStack, element);
-            ClearStack(&app->redoStack);
-        }
-
-        return success;
+        return ProcessMove(app, command);
 
     /** Wait */
     } else if (STR_START_WITH(command, "wait")) {
-        int h, m;
-        int result = sscanf(command + 5, "%d %d", &h, &m);
-        if (result != 2) {
-            PrintAppState(app);
-            printf("\nInvalid wait parameters: %s\n", command + 5);
-            return false;
-        }
-
-        if (h < 0 || m < 0) {
-            PrintAppState(app);
-            printf("\nInvalid wait parameters: %d %d\n", h, m);
-            return false;
-        }
-
-        AddHour(&app->currentTime, h);
-        AddMinute(&app->currentTime, m-1); // -1 because the loop will increment the time by 1 minute
-
-        sprintf(message, "Player waited for %d hours and %d minutes", h, m);
-        AddLogMessage(message);
-        StackPush(&app->undoStack, (StackElement) {ACTION_WAIT, h, m});
-        ClearStack(&app->redoStack);
-        return true;
+        return ProcessWait(app, command);
 
     /** Inventory */
     } else if (STR_EQ(command, "inventory")) {
@@ -447,41 +358,7 @@ bool ProcessCommand(Application *app, char *command) {
             PrintAppState(app);
             return false;
         } else {
-            ClearAndPrintHeader();
-            PrintBuyMenu(app);
-
-            char internalCommand[MAX_COMMAND_LEN];
-            bool success = false;
-
-            while (!success) {
-                GetCommand(internalCommand);
-
-                int inputNum;
-                FoodType* types[STATIC_LIST_CAPACITY];
-                int count = FindFoodTypesByAction(&app->foodDirectory, ACTION_BUY, types);
-
-                if (sscanf(internalCommand, "%d", &inputNum) == 1) {
-                    if (inputNum > 0 && inputNum <= count) {
-                        FoodType* type = types[inputNum - 1];
-                        InsertDeliveryQueue(&app->deliveryQueue, type, &app->currentTime);
-                        
-                        StackPush(&app->undoStack, (StackElement) {ACTION_BUY, type->id, 0});
-                        ClearStack(&app->redoStack);
-                        return true;
-                    } else {
-                        ClearAndPrintHeader();
-                        PrintBuyMenu(app);
-                        printf("\nInvalid index: %d, Choose between 1-%d\n", inputNum, count);
-                    }
-                } else if (STR_EQ(internalCommand, "back")) {
-                    PrintAppState(app);
-                    return false;
-                } else {
-                    ClearAndPrintHeader();
-                    PrintBuyMenu(app);
-                    printf("\nInvalid menu command: %s\nType 'back' to return to the map\n", internalCommand);
-                }
-            }
+            return ProcessBuy(app);
         }
 
     /** Mix */
@@ -491,12 +368,7 @@ bool ProcessCommand(Application *app, char *command) {
             PrintAppState(app);
             return false;
         } else {
-            bool success = ExecuteRecipeAction(app, ACTION_MIX);
-            if (success) {
-                ClearStack(&app->redoStack);
-            }
-
-            return success;
+            return ExecuteRecipeAction(app, ACTION_MIX);
         }
 
     /** Chop */
@@ -506,12 +378,7 @@ bool ProcessCommand(Application *app, char *command) {
             PrintAppState(app);
             return false;
         } else {
-            bool success = ExecuteRecipeAction(app, ACTION_CHOP);
-            if (success) {
-                ClearStack(&app->redoStack);
-            }
-            
-            return success;
+            return ExecuteRecipeAction(app, ACTION_CHOP);
         }
     /** Fry */
     } else if (STR_EQ(command, "fry")) {
@@ -520,11 +387,7 @@ bool ProcessCommand(Application *app, char *command) {
             PrintAppState(app);
             return false;
         } else {
-            bool success = ExecuteRecipeAction(app, ACTION_FRY);
-            if (success) {
-                ClearStack(&app->redoStack);
-            }
-            return success;
+            return ExecuteRecipeAction(app, ACTION_FRY);
         }
         
         return false;
@@ -536,11 +399,7 @@ bool ProcessCommand(Application *app, char *command) {
             PrintAppState(app);
             return false;
         } else {
-            bool success = ExecuteRecipeAction(app, ACTION_BOIL);
-            if (success) {
-                ClearStack(&app->redoStack);
-            }
-            return success;
+            return ExecuteRecipeAction(app, ACTION_BOIL);
         }
 
         return false;

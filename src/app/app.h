@@ -28,6 +28,7 @@ typedef struct {
 void RegisterUser(char *name);
 bool IsValidName(const char *name);
 void InitApplication(Application *app);
+void PrintAppState(const Application *app);
 
 void ExecuteApplicationLoop(Application *app);
 void CleanUpApplication(Application *app);
