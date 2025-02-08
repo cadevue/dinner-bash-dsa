@@ -106,7 +106,7 @@ void UpdateDeliveryQueue(DeliveryQueue *deliveryQueue, Inventory* inventory, con
         ResetFood(&food, current->foodType, current->deliveredTime);
         InsertInventory(inventory, food);
 
-        sprintf(message, "Item %s is delivered! the item has been added to inventory!", current->foodType->name);
+        sprintf(message, "Item %s has been delivered! the item has been added to inventory!", current->foodType->name);
         AddLogMessage(message);
 
         deliveryQueue->head = current->next;

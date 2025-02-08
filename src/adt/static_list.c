@@ -43,6 +43,16 @@ int FindFoodTypesByAction(StaticList *list, char action, FoodType **dest) {
     return count;
 }
 
+Tree* FindRecipeById(StaticList *list, int id) {
+    for (int i = 0; i < list->count; i++) {
+        if (list->data[i].recipe->data->id == id) {
+            return list->data[i].recipe;
+        }
+    }
+
+    return NULL;
+}
+
 int FindRecipesByAction(StaticList *list, char action, Tree **dest) {
     int count = 0;
     for (int i = 0; i < list->count; i++) {

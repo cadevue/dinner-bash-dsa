@@ -34,6 +34,7 @@ StaticListElement* GetStaticListElement(StaticList *list, int index);
 
 FoodType* FindFoodTypeById(StaticList *list, int id);
 int FindFoodTypesByAction(StaticList *list, char action, FoodType **dest);
+Tree* FindRecipeById(StaticList *list, int id);
 int FindRecipesByAction(StaticList *list, char action, Tree **dest);
 
 // Insert only (on load). After that immutable

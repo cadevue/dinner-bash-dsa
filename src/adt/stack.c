@@ -21,8 +21,8 @@ void StackPush(Stack *stack, StackElement value) {
         }
     } else {
         stack->top++;
-        stack->data[stack->top] = value;
     }
+        stack->data[stack->top] = value;
 }
 
 StackElement StackPop(Stack *stack) {

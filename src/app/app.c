@@ -161,14 +161,7 @@ bool ExecuteRecipeAction(Application* app, char action) {
             if (inputNum > 0 && inputNum <= count) {
                 Tree* recipe = recipes[inputNum - 1];
 
-                success = DoRecipe(&app->sim.inventory, recipe, &app->currentTime, &app->undoStack);
-                if (success) { 
-                    StackPush(&app->undoStack, (StackElement) {action, inputNum, 0});
-                    return true;
-                }
-
-                PrintAppState(app);
-                return false;
+                return DoRecipe(&app->sim.inventory, recipe, &app->currentTime, &app->undoStack);
             } else {
                 ClearAndPrintHeader();
                 PrintActionMenu(app, action);
@@ -183,6 +176,16 @@ bool ExecuteRecipeAction(Application* app, char action) {
             printf("\nInvalid menu command: %s\nType 'back' to return to the map\n", internalCommand);
         }
     }
+}
+
+void UndoRecipeAction(Application *app, char action, StackElement element) {
+    Tree* recipe = FindRecipeById(&app->recipes, element.param1);
+    RevertRecipe(&app->sim.inventory, recipe, &app->currentTime, &app->undoStack, &app->redoStack);
+}
+
+void RedoRecipeAction(Application *app, char action, StackElement element) {
+    Tree* recipe = FindRecipeById(&app->recipes, element.param1);
+    DoRecipe(&app->sim.inventory, recipe, &app->currentTime, &app->undoStack);
 }
 
 void ProcessUndo(Application* app) {
@@ -231,8 +234,11 @@ void ProcessUndo(Application* app) {
             AddMinute(&app->currentTime, 1); // Cancel out the -1 minute from the undo action
             break;
 
-        case ACTION_USE_FOR_RECIPE:
-            // RevertRecipe(&app->sim.inventory, &app->recipes, &app->currentTime, &app->undoStack, &app->redoStack);
+        case ACTION_MIX:
+        case ACTION_CHOP:
+        case ACTION_FRY:
+        case ACTION_BOIL:
+            UndoRecipeAction(app, action, element);
             break;
 
         case ACTION_BUY:
@@ -287,9 +293,14 @@ void ProcessRedo(Application *app) {
             break;
 
         case ACTION_WAIT:
+            AddLogMessage("Redo wait hasn't been implemented!");
             break;
 
-        case ACTION_USE_FOR_RECIPE:
+        case ACTION_MIX:
+        case ACTION_CHOP:
+        case ACTION_FRY:
+        case ACTION_BOIL:
+            RedoRecipeAction(app, action, element);
             break;
 
         case ACTION_BUY:
@@ -306,7 +317,6 @@ void ProcessRedo(Application *app) {
             break;
     }
     
-    AddMinute(&app->currentTime, 1); // Redo action takes 1 minute
     PrintAppState(app);
 }
 
@@ -514,6 +524,7 @@ bool ProcessCommand(Application *app, char *command) {
             if (success) {
                 ClearStack(&app->redoStack);
             }
+            return success;
         }
         
         return false;
@@ -529,6 +540,7 @@ bool ProcessCommand(Application *app, char *command) {
             if (success) {
                 ClearStack(&app->redoStack);
             }
+            return success;
         }
 
         return false;
