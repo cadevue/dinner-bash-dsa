@@ -10,12 +10,12 @@ This project was originally assigned at the 3rd semester, but I decided to redo 
 # 📝 Project Description 
 A CLI program implemented in C about a cooking management game! Player can move inside a map and interact with the environment, such as buying ingredients and cooking food. This game has no win condition. This is just simulation that focus on implementation of basic data structure and algorithm, such as:
 
-- Static List to store game configurations, such as foods and its recipes (loaded in the beginning of the game).
-- Matrix to store the map of the game.
-- Priority Queue (in dynamic manner with linked list) to store the player's inventory based on expiration date, and delivery queue based on its arrival time.
-- Tree to store the recipes of the food.
-- Stack to store the player's action history, with undo and redo feature.
-- Map for algorithms in the game, such as checking whether the ingredients are available to cook a certain food.
+- **Static List** to store game configurations, such as foods and its recipes (loaded in the beginning of the game).
+- **Matrix** to store the map of the game.
+- **Priority Queue** (in dynamic manner with **linked list**) to store the player's inventory based on expiration date, and delivery queue based on its arrival time.
+- **Tree** to store the recipes of the food.
+- **Stack** to store the player's action history, with undo and redo feature.
+- **Map** for algorithms in the game, such as checking whether the ingredients are available to cook a certain food.
 
 > All data structures are implemented from scratch, without using library!
 
