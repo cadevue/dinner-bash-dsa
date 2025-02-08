@@ -50,11 +50,11 @@ void RegisterUser(char *name) {
         name[strlen(name) - 1] = '\0';
     }
 
-    // printf("Registering user...\n", name);
-    // for (int i = 0; i <= 100; i += 2) {
-    //     PrintProgressBar(i, 100);
-    //     usleep(2000);
-    // }
+    printf("Registering user...\n", name);
+    for (int i = 0; i <= 100; i += 2) {
+        PrintProgressBar(i, 100);
+        usleep(2000);
+    }
 }
 
 bool IsValidName(const char *name) {
@@ -69,20 +69,20 @@ void InitApplication(Application *app) {
     ResetStack(&app->undoStack);
     ResetStack(&app->redoStack);
 
-    /** Temporary hardcoded path */
+    /** Hardcoded path */
     LoadFoodTypes(&app->foodDirectory, "../../config/basic/foods.txt");
     LoadRecipes(&app->recipes, &app->foodDirectory, "../../config/basic/recipes.txt");
     LoadMap(&app->map, &app->sim, "../../config/basic/map.txt");
 
-    // printf("\n\nLoading configurations...\n");
-    // for (int i = 0; i <= 100; i += 2) {
-    //     PrintProgressBar(i, 100);
-    //     usleep(5000);
-    // }
-    // printf("\nConfigurations loaded\n");
+    printf("\n\nLoading configurations...\n");
+    for (int i = 0; i <= 100; i += 2) {
+        PrintProgressBar(i, 100);
+        usleep(5000);
+    }
+    printf("\nConfigurations loaded\n");
 
-    // printf("\nWelcome, %s!\n", app->sim.name);
-    // usleep(2000000);
+    printf("\nWelcome, %s!\n", app->sim.name);
+    usleep(2000000);
 
     app->isRunning = true;
 }

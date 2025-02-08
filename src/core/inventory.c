@@ -32,6 +32,8 @@ bool DoRecipe(Inventory *inventory, const Tree *recipe, const Time *currentTime,
 
             return false;
         }
+
+        SetMapValue(&occurences, type->id, required);
     }
 
     // Possible
