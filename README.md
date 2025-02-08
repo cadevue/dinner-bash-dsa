@@ -42,14 +42,15 @@ A CLI program implemented in C about a cooking management game! Player can move 
 
 # 📸 Screenshots 
 Here are some screenshots of the dinner bash!
+
 ### Splash Screen
-![Splash Screen](./docs/splash-screen.png) 
+![Screenshot - Splash Screen](./docs/splash-screen.png) 
 
 ### Main Gameplay
-![Map](./docs/map.png)
+![Screenshot - Main Gameplay](./docs/main-gameplay.png)
 
 ### Logs in Screen
-![Logs](./docs/logs.png)
+![Screenshot - Logs](./docs/logs.png)
 
 ### Delivery Queue
-![Delivery](./docs/delivery.png)
+![Screenshot - Delivery Queue](./docs/delivery.png)
