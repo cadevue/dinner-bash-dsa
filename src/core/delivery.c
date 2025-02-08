@@ -74,10 +74,12 @@ void RemoveLatestDeliveryQueue(DeliveryQueue *deliveryQueue, const FoodType *foo
     DeliveryQueueEntry *prev = nullptr;
 
     DeliveryQueueEntry *latest = nullptr;
+    DeliveryQueueEntry *latestPrev = nullptr;
 
     while (current != nullptr) {
         if (current->foodType->id == foodType->id) {
             latest = current;
+            latestPrev = prev;
         }
 
         prev = current;
@@ -85,10 +87,10 @@ void RemoveLatestDeliveryQueue(DeliveryQueue *deliveryQueue, const FoodType *foo
     }
 
     if (latest != nullptr) {
-        if (prev == nullptr) {
+        if (latestPrev == nullptr) {
             deliveryQueue->head = latest->next;
         } else {
-            prev->next = latest->next;
+            latestPrev->next = latest->next;
         }
 
         free(latest);

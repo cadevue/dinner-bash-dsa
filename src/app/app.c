@@ -239,6 +239,9 @@ void ProcessUndo(Application* app) {
             FoodType* type = FindFoodTypeById(&app->foodDirectory, param1);
             RemoveLatestDeliveryQueue(&app->deliveryQueue, type);
 
+            sprintf(message, "Undo buy! Order of %s has been cancelled", type->name);
+            AddLogMessage(message);
+
             StackPush(&app->redoStack, element);
             break;
 
@@ -292,6 +295,9 @@ void ProcessRedo(Application *app) {
         case ACTION_BUY:
             FoodType* type = FindFoodTypeById(&app->foodDirectory, param1);
             InsertDeliveryQueue(&app->deliveryQueue, type, &app->currentTime);
+
+            sprintf(message, "Redo buy! Order of %s has been restored", type->name);
+            AddLogMessage(message);
 
             StackPush(&app->undoStack, element);
             break;
