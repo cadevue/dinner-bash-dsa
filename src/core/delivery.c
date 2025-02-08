@@ -1,5 +1,6 @@
 #include "delivery.h"
 #include "log.h"
+#include "action.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -69,6 +70,38 @@ void InsertDeliveryQueue(DeliveryQueue *deliveryQueue, const FoodType *foodType,
     deliveryQueue->count++;
 }
 
+void InsertDeliveryQueueWithDeliveredTime(DeliveryQueue *deliveryQueue, const FoodType *foodType, Time deliveredTime) {
+    DeliveryQueueEntry *entry = (DeliveryQueueEntry *) malloc(sizeof(DeliveryQueueEntry));
+    entry->foodType = foodType;
+    entry->deliveredTime = deliveredTime;
+
+    entry->next = nullptr;
+
+    if (deliveryQueue->head == nullptr) {
+        deliveryQueue->head = entry;
+    } else {
+        DeliveryQueueEntry *current = deliveryQueue->head;
+        DeliveryQueueEntry *prev = nullptr;
+        while (current != nullptr && IsEqOrLater(&entry->deliveredTime, &current->deliveredTime)) {
+            prev = current;
+            current = current->next;
+        }
+
+        if (prev == nullptr) {
+            entry->next = deliveryQueue->head;
+            deliveryQueue->head = entry;
+        } else {
+            prev->next = entry;
+            entry->next = current;
+        }
+    }
+
+    char message[128];
+    sprintf(message, "Item %s is added back to the delivery queue!", foodType->name);
+    AddLogMessage(message);
+    deliveryQueue->count++;
+}
+
 void RemoveLatestDeliveryQueue(DeliveryQueue *deliveryQueue, const FoodType *foodType) {
     DeliveryQueueEntry *current = deliveryQueue->head;
     DeliveryQueueEntry *prev = nullptr;
@@ -98,7 +131,7 @@ void RemoveLatestDeliveryQueue(DeliveryQueue *deliveryQueue, const FoodType *foo
     }
 }
 
-void UpdateDeliveryQueue(DeliveryQueue *deliveryQueue, Inventory* inventory, const Time *currentTime) {
+void UpdateDeliveryQueue(DeliveryQueue *deliveryQueue, Inventory* inventory, const Time *currentTime, Stack *undoStack) {
     DeliveryQueueEntry *current = deliveryQueue->head;
     char message[128];
     while (current != nullptr && IsEqOrLater(currentTime, &current->deliveredTime)) {
@@ -108,6 +141,10 @@ void UpdateDeliveryQueue(DeliveryQueue *deliveryQueue, Inventory* inventory, con
 
         sprintf(message, "Item %s has been delivered! the item has been added to inventory!", current->foodType->name);
         AddLogMessage(message);
+
+        StackPush(undoStack, (StackElement) {
+            ACTION_DELIVER, current->foodType->id, GetTotalMinutes(&current->deliveredTime)
+        });
 
         deliveryQueue->head = current->next;
         free(current);

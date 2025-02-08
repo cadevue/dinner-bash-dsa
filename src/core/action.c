@@ -33,18 +33,3 @@ char NameToAction(const char *buffer) {
     if (strcasecmp(buffer, "Boil") == 0) return ACTION_BOIL;
     return ACTION_INVALID;
 }
-char GetOppositeAction(char action) {
-    switch (action) {
-        case ACTION_MOVE_U: return ACTION_MOVE_D;
-        case ACTION_MOVE_R: return ACTION_MOVE_L;
-        case ACTION_MOVE_D: return ACTION_MOVE_U;
-        case ACTION_MOVE_L: return ACTION_MOVE_R;
-        case ACTION_WAIT: return ACTION_UNDO_WAIT;
-        case ACTION_BUY: return ACTION_REVERT_BUY;
-        case ACTION_MIX: return ACTION_REVERT_RECIPE;
-        case ACTION_CHOP: return ACTION_REVERT_RECIPE;
-        case ACTION_FRY: return ACTION_REVERT_RECIPE;
-        case ACTION_BOIL: return ACTION_REVERT_RECIPE;
-        default: return ACTION_INVALID;
-    }
-}

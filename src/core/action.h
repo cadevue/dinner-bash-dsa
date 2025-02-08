@@ -19,15 +19,10 @@
 #define ACTION_WAIT     12
 
 #define ACTION_USE_FOR_RECIPE 13
-
-// Revert actions
-#define ACTION_UNDO_WAIT     16
-#define ACTION_REVERT_RECIPE 17
-#define ACTION_REVERT_BUY    18
+#define ACTION_DELIVER  14
 
 #define ACTION_SIM_POS  99
 
 char GetSymbolForAction(char action);
 void GetActionName(char action, char *buffer);
 char NameToAction(const char *buffer);
-char GetOppositeAction(char action);

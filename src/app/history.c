@@ -15,12 +15,24 @@ void RedoRecipeAction(Application *app, char action, StackElement element) {
     DoRecipe(&app->sim.inventory, recipe, &app->currentTime, &app->undoStack);
 }
 
+void ConsumeDeliveredActions(Application *app) {
+    while (StackPeek(&app->undoStack).action == ACTION_DELIVER) {
+        StackElement deliverElement = StackPop(&app->undoStack);
+        FoodType* type = FindFoodTypeById(&app->foodDirectory, deliverElement.param1);
+        Time deliveredAt = TimeFromTotalMinutes(deliverElement.param2);
+
+        InsertDeliveryQueueWithDeliveredTime(&app->deliveryQueue, type, deliveredAt);
+    }
+}
+
 void ProcessUndo(Application* app) {
     if (IsStackEmpty(&app->undoStack)) {
         AddLogMessage("Nothing to undo! Undo stack is empty");
         PrintAppState(app);
         return;
     }
+
+    ConsumeDeliveredActions(app);
 
     char message[MAX_LOG_MESSAGE_LENGTH];
     StackElement element = StackPop(&app->undoStack);
@@ -59,6 +71,7 @@ void ProcessUndo(Application* app) {
             AddLogMessage(message);
 
             AddMinute(&app->currentTime, 1); // Cancel out the -1 minute from the undo action
+            StackPush(&app->redoStack, element);
             break;
 
         case ACTION_MIX:
@@ -83,6 +96,7 @@ void ProcessUndo(Application* app) {
     }
 
     AddMinute(&app->currentTime, -1); // Undo action takes 1 minute
+    ConsumeDeliveredActions(app);
     PrintAppState(app);
 }
 
@@ -120,7 +134,15 @@ void ProcessRedo(Application *app) {
             break;
 
         case ACTION_WAIT:
-            AddLogMessage("Redo wait hasn't been implemented!");
+            AddHour(&app->currentTime, param1);
+            AddMinute(&app->currentTime, param2-1); // -1 because the loop will increment the time by 1 minute
+
+            UpdateApp(app); // Potentially update the delivery queue and inventory
+
+            sprintf(message, "Redo wait! Player waited for %d hours and %d minutes", param1, param2);
+            AddLogMessage(message);
+            StackPush(&app->undoStack, (StackElement) {ACTION_WAIT, param1, param2});
+
             break;
 
         case ACTION_MIX:

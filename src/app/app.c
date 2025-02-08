@@ -88,7 +88,7 @@ void InitApplication(Application *app) {
 }
 
 void UpdateApp(Application *app) {
-    UpdateDeliveryQueue(&app->deliveryQueue, &app->sim.inventory, &app->currentTime);
+    UpdateDeliveryQueue(&app->deliveryQueue, &app->sim.inventory, &app->currentTime, &app->undoStack);
     UpdateInventory(&app->sim.inventory, &app->currentTime);
 }
 
@@ -195,10 +195,13 @@ bool ProcessWait(Application *app, char *command) {
     AddHour(&app->currentTime, h);
     AddMinute(&app->currentTime, m-1); // -1 because the loop will increment the time by 1 minute
 
+    UpdateApp(app); // Potentially update the delivery queue and inventory
+
     sprintf(message, "Player waited for %d hours and %d minutes", h, m);
     AddLogMessage(message);
     StackPush(&app->undoStack, (StackElement) {ACTION_WAIT, h, m});
     ClearStack(&app->redoStack);
+
     return true;
 }
 
