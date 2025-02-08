@@ -57,6 +57,8 @@ const char * HELP_COMMANDS=
 "|   - help     : Display all available commands.        |\n"
 "|   - exit     : Exit the game.                         |\n"
 "|   - wait h m : Wait for h hours and m minutes.        |\n"
+"|   - undo     : Undo the last action.                  |\n"
+"|   - redo     : Redo the last action.                  |\n"
 "|                                                       |\n"
 "| \033[1mNavigation\033[0m:                                           |\n"
 "|   - up       : Move upwards.                          |\n"
