@@ -198,13 +198,14 @@ void ProcessUndo(Application* app) {
     int param1 = element.param1;
     int param2 = element.param2;
 
-    char direction[10];
-
     switch (action) {
         case ACTION_MOVE_U:
         case ACTION_MOVE_R:
         case ACTION_MOVE_D:
         case ACTION_MOVE_L:
+            char direction[10];
+            element.param1 = GetX(&app->sim.position);
+            element.param2 = GetY(&app->sim.position);
             SetSimulatorPosition(&app->sim, param1, param2);
 
             if (action == ACTION_MOVE_U) strcpy(direction, "up");
@@ -214,6 +215,8 @@ void ProcessUndo(Application* app) {
 
             sprintf(message, "Undo move %s! Player moved back to (%d, %d)", direction, param1, param2);
             AddLogMessage(message);
+
+            StackPush(&app->redoStack, element);
             break;
 
         case ACTION_WAIT:
@@ -233,20 +236,77 @@ void ProcessUndo(Application* app) {
             break;
 
         case ACTION_BUY:
-            // RemoveDeliveryQueue(&app->deliveryQueue, param1);
+            FoodType* type = FindFoodTypeById(&app->foodDirectory, param1);
+            RemoveLatestDeliveryQueue(&app->deliveryQueue, type);
+
+            StackPush(&app->redoStack, element);
             break;
 
         default:
             break;
     }
 
-    StackPush(&app->redoStack, element);
     AddMinute(&app->currentTime, -1); // Undo action takes 1 minute
+    PrintAppState(app);
+}
+
+void ProcessRedo(Application *app) {
+    if (IsStackEmpty(&app->redoStack)) {
+        AddLogMessage("Nothing to redo! Redo stack is empty");
+        PrintAppState(app);
+        return;
+    }
+
+    StackElement element = StackPop(&app->redoStack);
+    char action = element.action;
+    int param1 = element.param1;
+    int param2 = element.param2;
+
+    switch (action) {
+        case ACTION_MOVE_U:
+        case ACTION_MOVE_R:
+        case ACTION_MOVE_D:
+        case ACTION_MOVE_L:
+            char direction[10];
+            element.param1 = GetX(&app->sim.position);
+            element.param2 = GetY(&app->sim.position);
+            SetSimulatorPosition(&app->sim, param1, param2);
+
+            if (action == ACTION_MOVE_U) strcpy(direction, "up");
+            if (action == ACTION_MOVE_R) strcpy(direction, "right");
+            if (action == ACTION_MOVE_D) strcpy(direction, "down");
+            if (action == ACTION_MOVE_L) strcpy(direction, "left");
+
+            sprintf(message, "Redo move %s! Player moved back to (%d, %d)", direction, param1, param2);
+            AddLogMessage(message);
+
+            StackPush(&app->undoStack, element);
+            break;
+
+        case ACTION_WAIT:
+            break;
+
+        case ACTION_USE_FOR_RECIPE:
+            break;
+
+        case ACTION_BUY:
+            FoodType* type = FindFoodTypeById(&app->foodDirectory, param1);
+            InsertDeliveryQueue(&app->deliveryQueue, type, &app->currentTime);
+
+            StackPush(&app->undoStack, element);
+            break;
+
+        default:
+            break;
+    }
+    
+    AddMinute(&app->currentTime, 1); // Redo action takes 1 minute
     PrintAppState(app);
 }
 
 /** Command Processor */
 bool ProcessCommand(Application *app, char *command) {
+
     /** Exit */
     if (STR_EQ(command, "exit") || STR_EQ(command, "quit")) {
         app->isRunning = false;
@@ -310,6 +370,7 @@ bool ProcessCommand(Application *app, char *command) {
             
             StackElement element = {action, x, y};
             StackPush(&app->undoStack, element);
+            ClearStack(&app->redoStack);
         }
 
         return success;
@@ -336,6 +397,7 @@ bool ProcessCommand(Application *app, char *command) {
         sprintf(message, "Player waited for %d hours and %d minutes", h, m);
         AddLogMessage(message);
         StackPush(&app->undoStack, (StackElement) {ACTION_WAIT, h, m});
+        ClearStack(&app->redoStack);
         return true;
 
     /** Inventory */
@@ -388,6 +450,7 @@ bool ProcessCommand(Application *app, char *command) {
                         InsertDeliveryQueue(&app->deliveryQueue, type, &app->currentTime);
                         
                         StackPush(&app->undoStack, (StackElement) {ACTION_BUY, type->id, 0});
+                        ClearStack(&app->redoStack);
                         return true;
                     } else {
                         ClearAndPrintHeader();
@@ -404,6 +467,7 @@ bool ProcessCommand(Application *app, char *command) {
                 }
             }
         }
+
     /** Mix */
     } else if (STR_EQ(command, "mix")) {
         if (!IsAdjacentToActionTile(app, ACTION_MIX)) {
@@ -411,7 +475,12 @@ bool ProcessCommand(Application *app, char *command) {
             PrintAppState(app);
             return false;
         } else {
-            return ExecuteRecipeAction(app, ACTION_MIX);
+            bool success = ExecuteRecipeAction(app, ACTION_MIX);
+            if (success) {
+                ClearStack(&app->redoStack);
+            }
+
+            return success;
         }
 
     /** Chop */
@@ -421,7 +490,12 @@ bool ProcessCommand(Application *app, char *command) {
             PrintAppState(app);
             return false;
         } else {
-            return ExecuteRecipeAction(app, ACTION_CHOP);
+            bool success = ExecuteRecipeAction(app, ACTION_CHOP);
+            if (success) {
+                ClearStack(&app->redoStack);
+            }
+            
+            return success;
         }
     /** Fry */
     } else if (STR_EQ(command, "fry")) {
@@ -430,7 +504,10 @@ bool ProcessCommand(Application *app, char *command) {
             PrintAppState(app);
             return false;
         } else {
-            return ExecuteRecipeAction(app, ACTION_FRY);
+            bool success = ExecuteRecipeAction(app, ACTION_FRY);
+            if (success) {
+                ClearStack(&app->redoStack);
+            }
         }
         
         return false;
@@ -442,7 +519,10 @@ bool ProcessCommand(Application *app, char *command) {
             PrintAppState(app);
             return false;
         } else {
-            return ExecuteRecipeAction(app, ACTION_BOIL);
+            bool success = ExecuteRecipeAction(app, ACTION_BOIL);
+            if (success) {
+                ClearStack(&app->redoStack);
+            }
         }
 
         return false;
@@ -450,6 +530,11 @@ bool ProcessCommand(Application *app, char *command) {
     /** Undo */
     } else if (STR_EQ(command, "undo")) {
         ProcessUndo(app);
+        return false;
+
+    /** Redo */
+    } else if (STR_EQ(command, "redo")) {
+        ProcessRedo(app);
         return false;
 
     /** Unknown command */

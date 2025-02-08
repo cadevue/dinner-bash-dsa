@@ -16,5 +16,6 @@ typedef struct {
 
 void ResetDeliveryQueue(DeliveryQueue *deliveryQueue);
 void InsertDeliveryQueue(DeliveryQueue *deliveryQueue, const FoodType *foodType, const Time *currentTime);
+void RemoveLatestDeliveryQueue(DeliveryQueue *deliveryQueue, const FoodType *foodType);
 void UpdateDeliveryQueue(DeliveryQueue *deliveryQueue, Inventory *inventory, const Time *currentTime);
 void FreeDeliveryQueue(DeliveryQueue *deliveryQueue);

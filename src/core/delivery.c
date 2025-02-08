@@ -47,7 +47,7 @@ void InsertDeliveryQueue(DeliveryQueue *deliveryQueue, const FoodType *foodType,
     } else {
         DeliveryQueueEntry *current = deliveryQueue->head;
         DeliveryQueueEntry *prev = nullptr;
-        while (current != nullptr && !IsEqOrLater(currentTime, &current->deliveredTime)) {
+        while (current != nullptr && IsEqOrLater(&entry->deliveredTime, &current->deliveredTime)) {
             prev = current;
             current = current->next;
         }
@@ -67,6 +67,33 @@ void InsertDeliveryQueue(DeliveryQueue *deliveryQueue, const FoodType *foodType,
     sprintf(message, "%s order successful! Item will be delivered in %s", foodType->name, duration);
     AddLogMessage(message);
     deliveryQueue->count++;
+}
+
+void RemoveLatestDeliveryQueue(DeliveryQueue *deliveryQueue, const FoodType *foodType) {
+    DeliveryQueueEntry *current = deliveryQueue->head;
+    DeliveryQueueEntry *prev = nullptr;
+
+    DeliveryQueueEntry *latest = nullptr;
+
+    while (current != nullptr) {
+        if (current->foodType->id == foodType->id) {
+            latest = current;
+        }
+
+        prev = current;
+        current = current->next;
+    }
+
+    if (latest != nullptr) {
+        if (prev == nullptr) {
+            deliveryQueue->head = latest->next;
+        } else {
+            prev->next = latest->next;
+        }
+
+        free(latest);
+        deliveryQueue->count--;
+    }
 }
 
 void UpdateDeliveryQueue(DeliveryQueue *deliveryQueue, Inventory* inventory, const Time *currentTime) {
