@@ -2,12 +2,6 @@
 
 > This project is part of my CS202 Challenge. More details about it on [my website](https://cadevue.com)! (updated soon)
 
-# 🧰 Technology Used
-The technologies used in this project are:
-- **C** for the implementation
-- **CMake** for the build system
-- **GCC** as the compiler
-
 # 📌 About This Project 
 This program is part of my Computer Science Study at Bandung Institute of Technology. The specific course related to this project is IF2110 Algorithm and Data Structure. The full specification of the project is available at the [docs folder](docs/Specification.pdf), although it is available in Indonesian only.
 
@@ -31,6 +25,12 @@ A CLI program implemented in C about a cooking management game! Player can move 
 - **Map** for algorithms in the game, such as checking whether the ingredients are available to cook a certain food.
 
 > All data structures are implemented from scratch, without using library!
+
+# 🧰 Technology Used
+The technologies used in this project are:
+- **C** language the for game implementation
+- **CMake** for the build system
+- **GCC** as the compiler
 
 # 🚀 How to Run
 ### Prerequisites
